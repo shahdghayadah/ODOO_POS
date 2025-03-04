@@ -1,0 +1,27 @@
+<templates xml:space="preserve">
+    <t t-name="point_of_sale1.BankTransferPopup">
+        <Dialog title="props.title">
+            <div class="manual-payment-popup">
+                <div class="form-group">
+                    <label for="reference">Transfer Reference</label>
+                    <input type="text" id="reference" t-on-change="onCardNumberChange" t-att-value="state.reference" placeholder="1234 5678 9012 3456"/>
+
+
+                    <label for="customerName">Customer Name</label>
+                    <input type="text" id="customerName" t-on-change="onCustomerNameChange" t-att-value="state.customerName" />
+                </div>               
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transferDate">Expiration Date</label>
+                        <input type="date" id="transferDate" t-on-change="onExpirationDateChange" t-att-value="state.transferDate"/>
+                    </div>
+                </div>
+                <t t-set-slot="footer">
+                    <button class="btn btn-secondary" t-on-click="onCancel">Cancel</button>
+                    <button class="btn btn-primary" t-on-click="onConfirm">Confirm</button>
+                </t>
+            </div>
+        </Dialog>
+    </t>
+</templates>
+ 

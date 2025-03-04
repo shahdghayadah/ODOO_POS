@@ -1,0 +1,467 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* point_of_sale_1
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e-20241105\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-23 10:46+0000\n"
+"PO-Revision-Date: 2025-02-23 10:46+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,help:point_of_sale_1.field_account_journal__type
+msgid ""
+"\n"
+"        Select 'Sale' for customer invoices journals.\n"
+"        Select 'Purchase' for vendor bills journals.\n"
+"        Select 'Cash', 'Bank' or 'Credit Card' for journals that are used in customer or vendor payments.\n"
+"        Select 'General' for miscellaneous operations journals.\n"
+"        "
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+msgid "05222222222"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+msgid "1234 5678 9012 3456"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-python
+#: code:addons/point_of_sale_1/models/Pos_Payment_Method.py:0
+msgid "API key cannot be empty!"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_config_settings_view_form
+msgid "Accept payments with a Nayax payment terminal"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__check_transfer_amount
+msgid "Amount"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__bank
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__pos_payment_method__type__bank
+msgid "Bank"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__banktransfer
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__pos_payment_method__type__banktransfer
+msgid "Bank transfer"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+msgid "CVV"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/check_popup/CheckPaymentPopup.xml:0
+msgid "Cancel"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+msgid "Card Holder ID"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+msgid "Card Number"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__cash
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__pos_payment_method__type__cash
+msgid "Cash"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__check
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__pos_payment_method__type__check
+msgid "Check"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/check_popup/CheckPaymentPopup.xml:0
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.view_pos_payment_form_custom
+msgid "Check Date"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/check_popup/CheckPaymentPopup.xml:0
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.view_pos_payment_form_custom
+msgid "Check Number"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_res_config_settings__module_pos_Checks
+msgid "Checks"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model,name:point_of_sale_1.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/check_popup/CheckPaymentPopup.xml:0
+msgid "Confirm"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__credit
+msgid "Credit Card"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__pos_payment_method__type__pay_later
+msgid "Customer Account"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/check_popup/CheckPaymentPopup.xml:0
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.view_pos_payment_form_custom
+msgid "Customer Name"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__check_customer_name
+msgid "Custpmer Name"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__check_transfer_date
+msgid "Date"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js:0
+msgid "Discard"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,help:point_of_sale_1.field_res_config_settings__module_pos_Checks
+msgid "Enable this feature to activate the custom PoS functionality Checks."
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,help:point_of_sale_1.field_res_config_settings__module_pos_nayax
+msgid "Enable this feature to activate the custom PoS functionality."
+msgstr ""
+
+#. module: point_of_sale_1
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_payment_method_view_form_inherit_nayax
+msgid ""
+"Enter device  IP in the format '000.000.000.000' for Nayax integration."
+msgstr ""
+
+#. module: point_of_sale_1
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_payment_method_view_form_inherit_nayax
+msgid ""
+"Enter netowk public IP in the format '000.000.000.000' for Nayax "
+"integration."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.js:0
+msgid "Error"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+msgid "Expiration Date"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/ManualPaymentPopup.xml:0
+msgid "Holder ID"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__is_check_payment
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__is_transfer
+msgid "Is Check Payment"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model,name:point_of_sale_1.model_account_journal
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment_method__journal_id
+msgid "Journal"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,help:point_of_sale_1.field_pos_payment_method__journal_id
+msgid ""
+"Leave empty to use the receivable account of the customer.\n"
+"Defines the journal where to book the accumulated payments (or individual payment if Identify Customer is true) after closing the session.\n"
+"For cash journal, we directly write to the default account in the journal via statement lines.\n"
+"For bank journal, we write to the outstanding account specified in this payment method.\n"
+"Only cash, bank, and check journals are allowed."
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__general
+msgid "Miscellaneous"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_res_config_settings__module_pos_nayax
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_config_settings_view_form
+msgid "Nayax"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "New amount"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__check_number
+msgid "Number"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-python
+#: code:addons/point_of_sale_1/models/account_journal.py:0
+msgid ""
+"Only journals of type 'Cash' ,'Checke' or 'Bank' could be used with payment "
+"methods."
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment_method__api_key
+msgid "Payment Device IP "
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js:0
+msgid "Payments Difference"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__phone_number
+msgid "Phone Number"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "Please select the payment type"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model,name:point_of_sale_1.model_pos_payment_method
+msgid "Point of Sale Payment Methods"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model,name:point_of_sale_1.model_pos_payment
+msgid "Point of Sale Payments"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model,name:point_of_sale_1.model_pos_session
+msgid "Point of Sale Session"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js:0
+msgid "Proceed Anyway"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment_method__public_api_key
+msgid "Public IP"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__purchase
+msgid "Purchase"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields.selection,name:point_of_sale_1.selection__account_journal__type__sale
+msgid "Sales"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_payment_method_view_form_inherit_nayax
+msgid "Save API Key"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js:0
+msgid ""
+"The maximum difference allowed is %s.\n"
+"Please contact your manager to accept the closing difference."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js:0
+msgid ""
+"The money counted doesn't match what we expected. Want to log the difference"
+" for the books?"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_config_settings_view_form
+msgid ""
+"The transactions are processed by Nayax. Set your Nayax credentials on the "
+"related payment method."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.js:0
+msgid "There is already an electronic payment in progress."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.js:0
+msgid ""
+"To ensure due balance follow-up, generate an invoice or download the "
+"accounting application. "
+msgstr ""
+
+#. module: point_of_sale_1
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.view_pos_payment_form_custom
+msgid "Transfer Dete"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/popup/bank_transfer_popup/BankTransferPopup.xml:0
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.view_pos_payment_form_custom
+msgid "Transfer Reference"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_account_journal__type
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment_method__type
+msgid "Type"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.js:0
+msgid "Warning"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.xml:0
+msgid "X  דו\"ח"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-python
+#: code:addons/point_of_sale_1/models/pos_session.py:0
+msgid ""
+"You don't have the access rights to get the point of sale closing control "
+"data."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.xml:0
+msgid "Z  דו\"ח"
+msgstr ""
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment__transfer_ref
+msgid "transfer ref"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "אנא הזן מספר שלם בין 1 ל-36."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "העסקה בוטלה על ידי מסוף התשלום."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "התשלום הושלם בהצלחה."
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "התשלום המקוון נכשל מהסיבה הבאה: "
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid ""
+"לא ניתן היה להתחבר למסוף התשלום. אנא בדוק את חיבור הרשת או את הגדרות ה-IP "
+"שלך"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "מספר תשלומים"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "פרטי הצ'ק נשמרו בהצלחה"
+msgstr ""
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
+msgid "שורת תשלום במזומן נבחרה"
+msgstr ""

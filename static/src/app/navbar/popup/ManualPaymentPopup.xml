@@ -1,0 +1,34 @@
+<templates xml:space="preserve">
+    <t t-name="point_of_sale1.ManualPaymentPopup">
+        <Dialog title="props.title">
+            <div class="manual-payment-popup">
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" t-on-change="onCardNumberChange" t-att-value="state.cardNumber" placeholder="1234 5678 9012 3456"/>
+                </div>
+               
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" t-on-change="onCvvChange" t-att-value="state.cvv" placeholder="123"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="expirationDate">Expiration Date</label>
+                        <input type="month" id="expirationDate" t-on-change="onExpirationDateChange" t-att-value="state.expirationDate"/>
+                    </div>
+                </div>
+               
+                <div class="form-group">
+                    <label for="cardHolderId">Card Holder ID</label>
+                    <input type="text" id="cardHolderId" t-on-change="onCardHolderIdChange" t-att-value="state.cardHolderId" placeholder="Holder ID"/>
+                </div>
+               
+                <t t-set-slot="footer">
+                    <button class="btn btn-secondary" t-on-click="onCancel">Cancel</button>
+                    <button class="btn btn-primary" t-on-click="onConfirm">Confirm</button>
+                </t>
+            </div>
+        </Dialog>
+    </t>
+</templates>
+ 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
+    <xpath expr="//img[hasclass('pos-receipt-logo')]" position="attributes">
+        <attribute name="style">display: none;</attribute>
+    </xpath>
+   
+        <xpath expr="//div[hasclass('pos-receipt-contact')]" position="replace">
+            <div class="d-flex flex-column align-items-center" dir="rtl">
+                <div class="pos-receipt-contact" style="font-size: 18px; font-weight: bold;">
+                    <!-- contact address -->
+                    <div t-if="props.data.company.name" t-esc="props.data.company.name"  style="font-size: 20px;"/>
+                    <div t-if="props.data.company.street" t-esc="props.data.company.street" style="font-size: 18px; font-weight: normal;" />
+ 
+                    <t t-if="props.data.company.phone">
+                        <div style="font-size: 14px;">Tel:<t t-esc="props.data.company.phone" /></div>
+                    </t>
+                    <t t-if="props.data.company.vat">
+                        <div style="font-size: 14px;" t-esc="vatText"/>
+                    </t>
+                    <br />
+                    <div style="font-size: 14px;">
+                    <t t-set="is_refund" t-value="props.data.order.lines.some(orderline =&gt; orderline.qty  &lt; 0)"/>
+                        <t t-if="is_refund"> חשבונית מס זיכוי - מקור </t>
+                        <t t-else=""> חשבונית מס קבלה - מקור </t>
+                    </div>
+                    <div t-if="false" style="white-space:pre-line" t-esc="props.data.header" />
+                    <div t-if="false" class="cashier">
+                        <div t-if="false" t-esc="props.data.cashier" />
+                    </div>
+                </div>
+            </div>
+        </xpath>
+         <xpath expr="//h1[hasclass('tracking-number')]" position="replace">
+        </xpath>
+ 
+    </t>
+</templates>

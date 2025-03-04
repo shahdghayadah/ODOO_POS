@@ -1,0 +1,23 @@
+<templates xml:space="preserve">
+    <t t-name="point_of_sale1.BitPaymentPopup">
+        <Dialog title="props.title">
+            <div class="manual-payment-popup">
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="text" id="phoneNumber" t-on-change="onPhoneNumberChange" t-att-value="state.phoneNumber" placeholder="1234 5678 9012 3456"/>
+                </div>
+               
+                    <div class="form-group">
+                        <label for="expirationDate">Expiration Date</label>
+                        <input type="date" id="expirationDate" t-on-change="onExpirationDateChange" t-att-value="state.expirationDate"/>
+                    </div>
+                      
+                <t t-set-slot="footer">
+                    <button class="btn btn-secondary" t-on-click="onCancel">Cancel</button>
+                    <button class="btn btn-primary" t-on-click="onConfirm">Confirm</button>
+                </t>
+            </div>
+        </Dialog>
+    </t>
+</templates>
+ 

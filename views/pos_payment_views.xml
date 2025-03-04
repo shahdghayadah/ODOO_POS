@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pos_payment_form_custom" model="ir.ui.view">
+        <field name="name">pos.payment.form.custom</field>
+        <field name="model">pos.payment</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+             <field name="check_number" string="Check Number" invisible="not is_check_payment"/>
+             <field name="check_transfer_date" string="Check Date" invisible="not is_check_payment "/>
+             <field name="check_customer_name"  string="Customer Name" invisible="not is_check_payment"/>
+             <field name="transfer_ref" string="Transfer Reference"  invisible="not is_transfer"/>
+             <field name="check_transfer_date" string="Transfer Date" invisible="not is_transfer "/>
+            <field name="check_customer_name"  string="Customer Name" invisible="not is_transfer "/>
+
+            <field name="phone_number" string="Phone Number" invisible="not is_bit "/>
+             <field name="check_transfer_date" string="Transfer Date" invisible="not is_bit "/>
+
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_pos_payment_tree_custom" model="ir.ui.view">
+        <field name="name">pos.payment.list.custom</field>
+        <field name="model">pos.payment</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_payment_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount']" position="after">
+ 
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">            
+ 
+    <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+       
+<xpath expr="//div[@class='pos-receipt p-2']/OrderWidget" position="before">
+            <div class="text-center">--------------------------------</div>
+ 
+            <div class="pos-receipt-order-data" style="margin-bottom: 5px; font-size: 14px; font-weight: bold;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <t t-set="order_date" t-value="props.data.date.split(' ')[0]" />
+                        <t t-esc="order_date" />
+                    </div>
+                    <div>
+                        מסוף <t t-esc="props.data.headerData.company.company_registry" />
+                    </div>
+ 
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <t t-set="order_time" t-value="props.data.date.split(' ')[1]" />
+                        <t t-esc="order_time" />
+                    </div>
+                    <div t-if="props.data.headerData.trackingNumber and !props.data.headerData.bigTrackingNumber">
+                    <t t-set="is_refund" t-value="props.data.orderlines.some(orderline =&gt; orderline.qty  &lt; 0)"/>
+                        <t t-if="is_refund">ח-ן זיכוי </t>
+                        <t t-else="">ח-ן </t>
+                    <span t-esc="props.data.headerData.trackingNumber" />
+                    </div>
+ 
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 5px; margin-bottom: 5px;">------------------------------</div>
+        </xpath>
+   <xpath expr="//div[@class='pos-receipt p-2']/OrderWidget" position="replace">
+            <OrderWidget t-if="props.data.orderlines?.length" lines="props.data.orderlines" t-slot-scope="scope" generalNote="props.data.generalNote or ''" screenName="props.data.screenName">
+                <t t-set="line" t-value="scope.line"/>
+                <!-- Inline Orderline Content -->
+                <li class="orderline position-relative d-flex align-items-center p-2 lh-sm cursor-pointer"
+                    style="direction: rtl; text-align: right;">
+                    <div class="product-order"></div>
+                    <div t-if="line.imageSrc" class="o_line_container d-flex align-items-center justify-content-center">
+                        <img t-attf-style="border-radius: 1rem;" t-att-src="line.imageSrc"/>
+                    </div>
+                    <div class="d-flex flex-column w-100 gap-1">
+                        <div class="d-flex justify-content-between flex-row-reverse">
+                            <div class="product-name d-inline-block flex-grow-1 fw-bolder pe-1 text-truncate">
+                                <span class="text-wrap" t-esc="line.productName"/>
+                                <t t-slot="product-name"/>
+                            </div>
+                            <div t-if="!props.basic_receipt" class="product-price price fw-bolder" style="direction: ltr; unicode-bidi: isolate;">
+                                <t t-if="line.price === 'free'">Free</t>
+                            </div>
+                            <div t-if="props.showTaxGroupLabels" t-esc="line.taxGroupLabels" class="text-end" style="width: 2rem"/>
+                        </div>
+                        <ul class="info-list d-flex flex-column" style="padding-right: 0; direction: rtl; text-align: right;">
+                            <li class="price-per-unit d-flex flex-row-reverse align-items-center" style="direction: rtl; unicode-bidi: isolate; justify-content: flex-end;">
+                                <div style="direction: ltr; text-align: left; margin-left: auto;">
+                                    <span class="qty px-1 border rounded text-bg-view fw-bolder ms-1"><t t-esc="line.qty"/></span>
+                                    <t t-if="!props.basic_receipt">
+                                        x
+                                        <t t-if="line.price !== 0">
+                                            <s t-esc="line.oldUnitPrice" t-if="line.oldUnitPrice" />
+                                            <t t-esc="line.unitPrice" />
+                                        </t>
+                                        /
+                                    </t>
+                                    <t t-if="line.unit" t-esc="line.unit" />
+                                </div>
+                            </li>
+                            <li t-if="line.price !== 0 and line.discount and line.discount !== '0' and !props.basic_receipt">
+                                <t t-esc="line.price_without_discount"/> With a <em><t t-esc="line.discount" />% </em> discount
+                            </li>
+                            <t t-if="line.customerNote">
+                                <li class="customer-note w-100 p-2 mt-2 rounded text-break text-bg-warning bg-opacity-25" style="text-align: right;">
+                                    <i class="fa fa-sticky-note ms-1" role="img" aria-label="Customer Note" title="Customer Note"/>
+                                    <t t-esc="line.customerNote" />
+                                </li>
+                            </t>
+                            <div class="internal-note-container d-flex gap-2 flex-row-reverse">
+                                <t t-foreach="line.internalNote?.split?.('\n') or []" t-as="note" t-key="note_index">
+                                    <li t-if="note.trim() !== ''" t-esc="note" class="internal-note badge mt-2 p-2 rounded-pill bg-info text-info bg-opacity-25" style="font-size: 0.85rem;" />
+                                </t>
+                            </div>
+                            <li t-foreach="line.packLotLines or []" t-as="lot" t-key="lot_index" t-esc="lot" />
+                            <t t-slot="default" />
+                        </ul>
+                    </div>
+                </li>
+                <!-- End Inline Orderline Content -->
+            </OrderWidget>
+ 
+</xpath>
+    <xpath expr="//div[@class='pos-receipt p-2']/div[@class='pos-receipt-order-data']/p" position="attributes">
+        <attribute name="style">display: none;</attribute>
+    </xpath>
+<xpath expr="//div[@class='pos-receipt p-2']/div[@class='pos-receipt-order-data']/div[@id= 'order-date']" position="replace">
+  <div> </div>
+</xpath>
+<xpath expr="//div[@class='pos-receipt p-2']/div[@class='pos-receipt-order-data']/div[@t-esc= 'props.data.name']" position="replace">
+  <div> </div>
+</xpath>      
+ 
+<xpath expr="//div[@class='pos-receipt p-2']/t[@t-if='!props.basic_receipt']/div[@class='pos-receipt-taxes']" position="replace">
+ 
+<div t-if="taxTotals and taxTotals.has_tax_groups" style="margin-top: 10px;">
+                <div style="text-align: center; margin-top: 5px; margin-bottom: 5px;">--------------------------------</div>
+    <t t-foreach="taxTotals.subtotals" t-as="subtotal" t-key="subtotal.name">
+        <div style="display: flex; align-items: center; margin-bottom: 3px; flex-direction: row-reverse; direction: rtl; text-align: right; justify-content: space-between;">
+            <span style="direction: ltr; text-align: left; unicode-bidi: isolate; ">
+                <t t-esc="props.formatCurrency(subtotal.base_amount_currency)"/>
+            </span>
+            <span t-if="showTaxGroupLabels" style="visibility: hidden;">A</span>
+            <span style="font-weight: bold; white-space: nowrap; max-width: 100%; overflow: hidden; direction: rtl; text-align: right; unicode-bidi: embed;">
+                <t t-out="subtotal.name"/>
+            </span>
+        </div>
+ 
+        <div t-foreach="subtotal.tax_groups" t-as="tax_group" t-key="tax_group.id" style="display: flex; margin-bottom: 3px; flex-direction: row-reverse; direction: rtl; text-align: right; justify-content: space-between;">
+            <span style="direction: ltr; text-align: left; unicode-bidi: isolate;  ">
+                <t t-esc="props.formatCurrency(tax_group.tax_amount_currency)"/>
+            </span>
+            <t t-if="showTaxGroupLabels">
+                <span t-if="tax_group.group_label" t-out="tax_group.group_label" style="margin-right: 5px;"/>
+                <span t-else="" style="visibility: hidden;">A</span>
+            </t>
+            <span style="direction: rtl; text-align: right; unicode-bidi: embed;">
+                <span t-esc="tax_group.group_name"/>
+                <t t-if="!taxTotals.same_tax_base">
+                    on
+                    <span t-esc="props.formatCurrency(tax_group.base_amount_currency)"/>
+                </t>
+            </span>
+        </div>
+    </t>
+</div>        
+</xpath>
+ 
+ 
+<xpath expr="//div[@class='pos-receipt p-2']/t[@t-if='!props.basic_receipt']/div[@class='pos-receipt-amount receipt-total']" position="attributes">
+        <attribute name="style">display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; font-weight: bold;</attribute>
+        <attribute name="dir">rtl</attribute>
+ 
+</xpath>
+ 
+<xpath expr="//div[@class='pos-receipt p-2']/t[@t-if='!props.basic_receipt']/div[@class='paymentlines text-start']" position="before">
+            <div class="text-center" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; font-weight: bold;" dir="rtl">אמצעי תשלום</div>
+</xpath>
+<xpath expr="//div[@class='pos-receipt p-2']/t[@t-if='!props.basic_receipt']/div[@class='paymentlines text-start']" position="attributes">
+        <attribute name="style">display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; font-weight: bold;</attribute>
+        <attribute name="dir">rtl</attribute>
+</xpath>
+<xpath expr="//div[@class='pos-receipt p-2']/t[@t-if='!props.basic_receipt']/div[@class='pos-receipt-amount receipt-change']" position="attributes">
+        <attribute name="style">display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; font-weight: bold;</attribute>
+        <attribute name="dir">rtl</attribute></xpath>
+<xpath expr="//div[@class='pos-receipt p-2']/t[@t-if='!props.basic_receipt']/t[@t-if='props.data.total_discount']/div[@class='text-center']" position="attributes">
+        <attribute name="style">display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; font-weight: bold;</attribute>
+        <attribute name="dir">rtl</attribute></xpath>
+    </t>
+</templates>
+ 
