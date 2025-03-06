@@ -5,7 +5,7 @@ import { enhancedButtons } from "@point_of_sale/app/generic_components/numpad/nu
 import { PaymentScreenPaymentLines } from '@point_of_sale/app/screens/payment_screen/payment_lines/payment_lines';
 import { patch } from "@web/core/utils/patch";
 import { useService } from "@web/core/utils/hooks";
-import { Component, useState , onWillStart} from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
 import { usePos } from "@point_of_sale/app/store/pos_hook";
 import { SelectionPopup } from "@point_of_sale/app/utils/input_popups/selection_popup";
 import { makeAwaitable } from "@point_of_sale/app/store/make_awaitable_dialog";
@@ -14,7 +14,9 @@ import { CheckPaymentPopup } from "@point_of_sale_1/app/navbar/popup/check_popup
 import { BankTransferPopup } from "@point_of_sale_1/app/navbar/popup/bank_transfer_popup/BankTransferPopup";  // Import the new popup
 import { BitPaymentPopup } from "@point_of_sale_1/app/navbar/popup/bit_popup/BitPaymentPopup";  // Import the new popup
 
+
 // kad_shahd
+import { sendTransactionRequest, sendTransactionPhase1, sendTransactionPhase2 , doTransactionCNP} from '@point_of_sale_1/app/screens/payment_screen/payment_functions';
 patch(PaymentScreenPaymentLines.prototype, {
     setup() {
         this.pos = usePos();
@@ -23,115 +25,10 @@ patch(PaymentScreenPaymentLines.prototype, {
         this.notification = useService("notification");
         this.selectedPaymentLines = []; // Initialize the array
         this.orm = useService("orm");
-        this.paymentline = null
-        this.state = useState({
-            latestResponse: null,
-        });
 
-        onWillStart(async () => {
-            await this.fetchLatestResponse();
-            setInterval(async () => {
-                await this.fetchLatestResponse();
-            }, 1000);  // Poll every 5 seconds
-        });
     },
-
-    async fetchLatestResponse() {
-        try {
-            const response = await fetch('/api/get_latest_response', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    jsonrpc: "2.0",
-                    method: "call",
-                    params: {}, // Your JSON data
-                }),
-            });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-    
-            const data = await response.json();
-            if (Object.keys(data.result).length && this.paymentline !== null) {
-                if (data.result.result.statusCode==0){
-                    this.selectedPaymentLines.push(this.paymentline);
-                    await this.checkPaymentLinesAmountSum(this.selectedPaymentLines);
-                    this.notification.add(
-                        _t("התשלום הושלם בהצלחה."),
-                        {
-                            type: "success",
-                            sticky: true,
-        
-                        }
-                    );
-                   await fetch('/api/clear_response_data', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            jsonrpc: "2.0",
-                            method: "call",
-                            params: {}, // Your JSON data
-                        }),
-                    });
-                }else if(data.result.result.statusCode==998){
-                    console.log('sendPaymentCancel')
-                    this.notification.add(
-                        _t("העסקה בוטלה על ידי מסוף התשלום."),
-                        {
-                            type: "danger",
-                            sticky: true,
-                        }
-                    );
-                    await this.props.deleteLine(this.paymentline.uuid); 
-                    await fetch('/api/clear_response_data', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            jsonrpc: "2.0",
-                            method: "call",
-                            params: {}, // Your JSON data
-                        }),
-                    });
-                    
-                }
-                else{
-                    console.log('sendPaymentCancel')
-                    this.notification.add(
-                        _t("התשלום המקוון נכשל מהסיבה הבאה: " + data.result.result.statusMessage),
-                        {
-                            type: "danger",
-                            sticky: true,
-                        }
-                    );
-                    await fetch('/api/clear_response_data', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            jsonrpc: "2.0",
-                            method: "call",
-                            params: {}, // Your JSON data
-                        }),
-                    });
-                }
-            }
-                // console.log("Latest response:",  data);
-
-        } catch (error) {
-            console.error("Error fetching latest response:", error);
-        }
-    },
- 
     async selectLine(paymentline) {
-        this.paymentline = paymentline
+
         console.log(paymentline)
         this.props.selectLine(paymentline.uuid);
         if (paymentline.payment_method_id?.type === 'check') {
@@ -264,15 +161,25 @@ patch(PaymentScreenPaymentLines.prototype, {
             const vuid = paymentline.pos_order_id.uuid; // Replace with actual dynamic value if needed
             const tranType = adjustedAmount >= 0 ? 1 : 53;
             let result;
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-            const year = now.getFullYear();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            const formattedTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            if (paymentline.payment_method_id.is_regular_payment){
+                try {
+                    result = await sendTransactionRequest(absoluteAmount, vuid, api_key, tranType, public_api_key);
+                    if (!result) { 
+                        this.paymentNotification(result,paymentline);
+                        return; 
+                    }
+                } catch (error) {
+                    console.error("Error during transaction request");
+                    this.notification.add(
+                        _t("לא ניתן היה להתחבר למסוף התשלום. אנא בדוק את חיבור הרשת או את הגדרות ה-IP שלך"),
+                        { type: "danger" }
+                    );
+                    await this.props.deleteLine(paymentline.uuid);
+                    return; // Stop execution due to error
+                }
+                this.paymentNotification(result,paymentline);  
+            }
+            else {
             let selectedPaymentType;
             try {
                 selectedPaymentType = await makeAwaitable(this.dialog, SelectionPopup, {
@@ -295,51 +202,11 @@ patch(PaymentScreenPaymentLines.prototype, {
 
              if (selectedPaymentType.id === 1) {
                 try {
-
-                    const jsonData = {
-                        data: {
-                            time: formattedTime, // Gets the current date and time in local format
-                            ipAddress: api_key // Replace with dynamic IP fetching if needed
-                        },
-                        "body": {
-                        jsonrpc: "2.0",
-                        method: "doTransaction",
-                        id: "0883012",
-                        params: [
-                            "ashrait",
-                            {
-                                vuid: vuid, // Use the vuid variable
-                                tranType: tranType, // Transaction type
-                                tranCode: 1, // Transaction code
-                                creditTerms: 1, // Credit terms
-                                amount: absoluteAmount, // Payment amount
-                                currency: "376", // Currency code
-                                additionalInfo: {
-                                    storeId: "string", // Replace with actual store ID if needed
-                                    posId: "string" // Replace with actual POS ID if needed
-                                }
-                            }
-                        ]
+                    result = await sendTransactionRequest(absoluteAmount, vuid, api_key, tranType, public_api_key);
+                    if (!result) { 
+                        this.paymentNotification(result,paymentline);
+                        return; 
                     }
-                    };
-            
-                    // Send JSON data to the server
-                    const response = await fetch('/save-transaction', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            jsonrpc: "2.0",
-                            method: "call",
-                            params: jsonData, // Your JSON data
-                        }),
-                    }
-
-
-                    
-                );
-                console.log(response)
                 } catch (error) {
                     console.error("Error during transaction request");
                     this.notification.add(
@@ -349,6 +216,7 @@ patch(PaymentScreenPaymentLines.prototype, {
                     await this.props.deleteLine(paymentline.uuid);
                     return; // Stop execution due to error
                 }
+                this.paymentNotification(result,paymentline);
 
 
                 
@@ -362,45 +230,9 @@ patch(PaymentScreenPaymentLines.prototype, {
                             console.log(result1.payload)
                             const formattedDate = result1.payload.expirationDate.replace("-", "").substring(2); // Result will be "2502"
                             console.log(formattedDate)
-                            const jsonData = {
-                                data: {
-                                    time: formattedTime,
-                                    ipAddress: api_key // Replace with dynamic IP fetching if needed
-                                },
-                                "body": {
-                                jsonrpc: "2.0",
-                                method: "doTransaction",
-                                id: "123454352",
-                                params: [
-                                    "ashrait",
-                                    {
-                                        vuid: vuid,
-                                        tranType: 1,
-                                        tranCode: 1,
-                                        amount: absoluteAmount,
-                                        currency: "376",
-                                        creditTerms: 1,
-                                        posEntryMode: 50,
-                                        cardNumber: result1.payload.cardNumber,
-                                        expDate: result1.payload.expirationDate,
-                                        cvv: result1.payload.cvv,
-                                        cardHolderId: result1.payload.cardHolderId
-                                        }
-                                    
-                                ]
-                            }
-                            };
-                    const response = await fetch('/save-transaction', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            jsonrpc: "2.0",
-                            method: "call",
-                            params: jsonData, // Your JSON data
-                        }),
-                    });
+
+                            result = await doTransactionCNP(vuid, api_key, public_api_key , absoluteAmount , result1.payload.cardNumber ,result1.payload.expirationDate , result1.payload.cvv , result1.payload.cardHolderId);
+                            this.paymentNotification(result,paymentline);
 
                         } else {
                          console.log("Manual Payment Cancelled");
@@ -418,6 +250,7 @@ patch(PaymentScreenPaymentLines.prototype, {
                         _t("לא ניתן היה להתחבר למסוף התשלום. אנא בדוק את חיבור הרשת או את הגדרות ה-IP שלך"),
                         { type: "danger" }
                     );
+                    await this.props.deleteLine(paymentline.uuid);
                     return; // Stop execution due to error
             }
 
@@ -440,86 +273,32 @@ patch(PaymentScreenPaymentLines.prototype, {
                     return; // Reject the input. This is IMPORTANT!
                 }
                 try {
-                    const jsonData = {
-                        data: {
-                            time:formattedTime, // Gets the current date and time in local format
-                            ipAddress: api_key // Replace with dynamic IP fetching if needed
-                        },
-                        "body": {
-                            jsonrpc:"2.0",
-                            method:"doTransactionPhase1",
-                            id:"67575",
-                            params: [
-                                "ashrait",{
-                                    vuid: vuid,
-                                    tranType: 1,
-                                    tranCode: 1,
-                                    creditTerms: selectedPaymentType.id,
-                                    amount: absoluteAmount,
-                                    currency: "376",
-                                    payments:parsedNum,
-
-                                }
-                                ]
-                        }
-
-                    };
-            const response = await fetch('/save-transaction', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    jsonrpc: "2.0",
-                    method: "call",
-                    params: jsonData, // Your JSON data
-                }),
-            });
-
+                result = await sendTransactionPhase1(absoluteAmount, vuid, api_key, tranType, public_api_key, parsedNum, selectedPaymentType.id);
+    
+                if (!result) { // Assume falsy value (null, undefined) indicates failed request
+                    this.paymentNotification(result,paymentline);
+                    return; // Stop execution as request failed.
+                }
             } catch (error) {
                 this.notification.add(
                         _t("לא ניתן היה להתחבר למסוף התשלום. אנא בדוק את חיבור הרשת או את הגדרות ה-IP שלך"),
                         { type: "danger" }
                     );
+                    await this.props.deleteLine(paymentline.uuid);
                     return; // Stop execution due to error
-            } 
-            await new Promise(resolve => setTimeout(resolve, 10000));
-                    const jsonData = {
-                        data: {
-                            time: formattedTime, // Gets the current date and time in local format
-                            ipAddress: api_key // Replace with dynamic IP fetching if needed
-                        },
-                        "body": {
-                            jsonrpc: "2.0",
-                            method: "doTransactionPhase2",
-                            params: [
-                                "ashrait",
-                                {
-                                    "tranCode": 1,
-                                    "creditTerms": selectedPaymentType.id,
-                                    "payments":parsedNum,
+            }               
+                if (result.result.statusCode == -999) {
+                    result = await sendTransactionPhase2(vuid, api_key, public_api_key, parsedNum, selectedPaymentType.id);
+    
+                    this.paymentNotification(result,paymentline);
                     
-                                }
-                            ],
-                            "id": "952550747"
-                        }                    
-                    };
-            const response = await fetch('/save-transaction', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    jsonrpc: "2.0",
-                    method: "call",
-                    params: jsonData, // Your JSON data
-                }),
-            });
-}
-                }          
+                } else {
+                    this.paymentNotification(result,paymentline);
+            }}
+        }
     } 
            
-
+            }
         }
         if (this.ui.isSmall) {
             this.dialog.add(NumberPopup, {
@@ -603,8 +382,6 @@ patch(PaymentScreenPaymentLines.prototype, {
             // If the amounts don't match, do nothing
             console.log("Amount does not match due amount.");
         }
-    },
-
+    }
 }
-
 );

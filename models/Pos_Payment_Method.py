@@ -16,6 +16,7 @@ class PosPaymentMethod(models.Model):
     _inherit = 'pos.payment.method'
     api_key = fields.Char(string="Payment Device IP ", copy=False)
     public_api_key = fields.Char(string="Public IP", copy=False)
+    is_regular_payment = fields.Boolean(string="Regular Payment", default=True)
     type = fields.Selection(selection=[('cash', 'Cash'), ('bank', 'Bank'), ('pay_later', 'Customer Account') , ('check', 'Check') ,('BankTransfer','Bank transfer' )  ,('bit' ,'Bit')], compute="_compute_type")
 
     def _get_payment_terminal_selection(self):
@@ -26,6 +27,7 @@ class PosPaymentMethod(models.Model):
         params = super()._load_pos_data_fields(config_id)
         params += ['api_key']
         params += ['public_api_key']
+        params += ['is_regular_payment']
 
         return params
     
@@ -38,7 +40,7 @@ class PosPaymentMethod(models.Model):
             _logger.info("API key saved for payment method: %s", record.name)
             # Here, you can add any logic needed to use the api_key for other purposes
             # For example, updating a related model or making an API call
-            record.write({'api_key': record.api_key , 'public_api_key': record.public_api_key})
+            record.write({'api_key': record.api_key , 'public_api_key': record.public_api_key , 'is_regular_payment': record.is_regular_payment})
             return True
         
 

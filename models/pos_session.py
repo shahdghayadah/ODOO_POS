@@ -1,14 +1,28 @@
+from datetime import date
 from odoo import models, fields, api, _
 from odoo.exceptions import AccessError
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.tools.convert import datetime
 
 class PosSession(models.Model):
     _inherit = 'pos.session'
+    # def _get_closed_orders(self):
+    #     #date_from = fields.Date.from_string('2025-01-01')
+    #     #date_to = fields.Date.from_string('2025-01-30')
+    #     date_from = datetime(2025, 1, 1, 0, 0)  # Start of the day
+    #     date_to = datetime(2025, 5, 30, 23, 59, 59)  # End of the day
 
+    #     return self.env['pos.order'].search([
+    #         ('date_order', '>=', date_from.strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
+    #         ('date_order', '<=', date_to.strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
+    #         ('state', 'in', ['paid', 'invoiced', 'done', 'posted']),
+    #     ])
     def get_closing_control_data(self):
         if not self.env.user.has_group('point_of_sale.group_pos_user'):
             raise AccessError(_("You don't have the access rights to get the point of sale closing control data."))
         self.ensure_one()
         orders = self._get_closed_orders()
+        print('**************************',orders)
         payments = orders.payment_ids.filtered(lambda p: p.payment_method_id.type != "pay_later")
         cash_payment_method_ids = self.payment_method_ids.filtered(lambda pm: pm.type == 'cash')
         default_cash_payment_method_id = cash_payment_method_ids[0] if cash_payment_method_ids else None
@@ -104,3 +118,6 @@ class PosSession(models.Model):
                 }
         print(data)
         return data
+    
+
+    

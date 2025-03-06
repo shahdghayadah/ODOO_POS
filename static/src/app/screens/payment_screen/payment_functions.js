@@ -23,7 +23,7 @@ export async function sendTransactionRequest(amount, vuid, api_key, tranType, pu
 
     console.log("Payload:", payload);
     // Send the request
-    const url = `https://${public_api_key}/Print/SPICy`;
+    const url = `${public_api_key}`;
 
     try {
         const response = await fetch(url, {
@@ -66,7 +66,7 @@ export async function sendTransactionPhase1(amount, vuid, api_key, tranType, pub
     
     console.log("Payload:", payload);
     // Send the request
-    const url = `https://${public_api_key}:8443/SPICy/`;
+    const url = `${public_api_key}`;
     // const url ='http://192.168.1.13:8080/SPICy'
 
 
@@ -108,7 +108,7 @@ export async function sendTransactionPhase2(vuid, api_key, public_api_key , paym
     
     console.log("Payload:", payload);
     // Send the request
-    const url = `https://${public_api_key}/Print/SPICy`;
+    const url = `${public_api_key}`;
     // const url ='http://192.168.1.13:8080/SPICy'
 
     try {
@@ -156,7 +156,7 @@ export async function doTransactionCNP(vuid, api_key, public_api_key , amount , 
     
     console.log("Payload:", payload);
     // Send the request
-    const url = `https://${public_api_key}/Print/SPICy`;
+    const url = `${public_api_key}`;
 
     try {
         const response = await fetch(url, {
@@ -193,7 +193,7 @@ export async function sendDoPeriodic(public_api_key,api_key) {
     
     console.log("Payload:", payload);
     // Send the request
-    const url = `https://${public_api_key}/Print/SPICy`;
+    const url = `${public_api_key}`;
 
     try {
         const response = await fetch(url, {

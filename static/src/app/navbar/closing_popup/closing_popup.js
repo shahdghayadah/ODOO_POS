@@ -201,67 +201,17 @@ patch(ClosePosPopup.prototype, {
         const reportContent = this.generateReportZContent();
         this.printReportZ(reportContent);
         let result;
-        const paymentTemplates = await this.orm.searchRead("pos.payment.method" ,[
-            ["use_payment_terminal", "=", "nayax"]
-        ]);
-        console.log("paymentTemplates", paymentTemplates)
-        if (paymentTemplates || paymentTemplates.length > 0) {
-             result = await sendDoPeriodic(paymentTemplates[0].public_api_key, paymentTemplates[0].api_key);
-        console.log("result", result) 
-    
-    }
-    },
-    // async downloadReportZ() {
-    //     const reportContent = this.generateReportZContent();
-    //     this.printReportZ(reportContent);
-    //     let result;
-    //     const paymentTemplates = await this.orm.searchRead("pos.payment.method" ,[
-    //         ["use_payment_terminal", "=", "nayax"]
-    //     ]);
-    //     console.log("paymentTemplates", paymentTemplates)
-    //     if (paymentTemplates || paymentTemplates.length > 0) {
-    //         const now = new Date();
-    //         const day = String(now.getDate()).padStart(2, '0');
-    //         const month = String(now.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-    //         const year = now.getFullYear();
-    //         const hours = String(now.getHours()).padStart(2, '0');
-    //         const minutes = String(now.getMinutes()).padStart(2, '0');
-    //         const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        const paymentTemplates = await this.orm.searchRead("pos.payment.method", [], ['use_payment_terminal']);
 
-    //         const formattedTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-    //         const jsonData = {
-    //             data: {
-    //                 time:formattedTime, // Gets the current date and time in local format
-    //                 ipAddress: api_key // Replace with dynamic IP fetching if needed
-    //             },
-    //             "body": {
-    //                 jsonrpc:"2.0",
-    //                 method:"doTransactionPhase1",
-    //                 id:"67575",
-    //                 params: [
-    //                     "ashrait", "wide",
-    //                     {
-    //                     "forceUpdateParams": true
-    //                     }
-    //                 ],
-    //                 "id": 2
-    //             }
-    //         };
-    //         const response = await fetch('/save-transaction', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 jsonrpc: "2.0",
-    //                 method: "call",
-    //                 params: jsonData, // Your JSON data
-    //             }),
-    //         });
-    
-    // }
-    // },
- 
+        for (const paymentTemplate of paymentTemplates) {
+            if (paymentTemplate.use_payment_terminal === 'nayax') {
+                result = await sendDoPeriodic(paymentTemplates[0].public_api_key, paymentTemplates[0].api_key);
+                break; // Exit the loop early if we find a match
+            }
+        }
+        console.log("paymentTemplates", paymentTemplates)
+    },
     totalAmount: 0,
  
     generateReportZContent() {

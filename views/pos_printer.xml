@@ -1,0 +1,62 @@
+<odoo>
+    <!-- Form View for POS Printer Configuration -->
+    <record id="view_pos_printer_form" model="ir.ui.view">
+        <field name="name">pos.printer.form</field>
+        <field name="model">printer.kad</field>
+        <field name="arch" type="xml">
+            <form string="POS Printer Configuration">
+                <sheet>
+                    <group>
+                        <field name="name" string="Printer Name" required="1"/>
+                        <field name="pos_category_id" string="POS Category"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open the form view -->
+    <record id="action_pos_printer" model="ir.actions.act_window">
+        <field name="name">POS Printers</field>
+        <field name="res_model">printer.kad</field>
+        <field name="view_mode">kanban,form</field>  <!-- Added kanban view -->
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new POS Printer!
+            </p>
+        </field>
+    </record>
+
+    <!-- Kanban View for POS Printer Configuration -->
+    <record id="view_pos_printer_kanban" model="ir.ui.view">
+        <field name="name">pos.printer.kanban</field>
+        <field name="model">printer.kad</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="pos_category_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="o_kanban_image_fill_left d-none d-md-block" role="img" aria-label="Printer" style="background-image: url('/web/static/src/img/placeholder.png')"/>
+                            <div class="oe_kanban_details">
+                                <ul>
+                                    <li>
+                                        <strong><field name="name"/></strong>
+                                    </li>
+                                    <li>
+                                        Category: <field name="pos_category_id"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    
+    <!-- Menu item to access the POS Printer Configuration -->
+    <menuitem id="menu_pos_printer" name="POS Printers" parent="point_of_sale.menu_point_config_product" action="action_pos_printer" sequence="8"/>
+</odoo>

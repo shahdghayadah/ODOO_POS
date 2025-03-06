@@ -27,7 +27,9 @@ patch(PaymentScreen.prototype, {
         this.payment_interface = null;
         this.error = false;
         this.pos.validateOrder = this.validateOrder.bind(this);
-        this.pos.currentOrder = this.currentOrder
+        this.pos.currentOrder = this.currentOrder;
+        this.orm = useService("orm");
+
 
     },
 
@@ -171,13 +173,99 @@ patch(PaymentScreen.prototype, {
                 if (!line.is_done()) {
                     this.currentOrder.remove_paymentline(line);
                 }
-            }
+            }            
+            await this.printOrderByCategory();
+
             await this._finalizeValidation();
+
             this.pos.printReceipt()
+
 
         }
     },
+    async printOrderByCategory() {
+        const orderLines = this.currentOrder.get_orderlines();
+        const printerData = await this.orm.searchRead("printer.kad", [], ['name', 'pos_category_id']);
+        console.log(printerData);  // Log the printer data from searchRead
+    
+        // Create a dynamic mapping of printers based on the pos_category_id
+        const printers = printerData.reduce((acc, item) => {
+            // Assuming pos_category_id is an array with [ID, Name], and we map it to the printer name
+            acc[item.pos_category_id[1]] = item.name;
+            return acc;
+        }, {});
+    
+        console.log("Printers mapping:", printers);
+    
+        console.log("Current order:", this.currentOrder);
+    
+        // Group order lines by category
+        const groupedOrders = {};
+    
+        for (const line of orderLines) {
+            const category = line.product_id.pos_categ_ids[0]?.name || "Other";
+            
+            if (!groupedOrders[category]) {
+                groupedOrders[category] = [];
+            }
+            
+            groupedOrders[category].push(line);
+        }
+    
+        console.log("Grouped orders:", groupedOrders);
+        // Iterate over each category and send a consolidated print request
+        for (const category in groupedOrders) {
+            let printerName;
 
-
+            printerName = printers[category];
+            
+            // if (category.includes("Food")) {
+            //     printerName = printers['Kitchen'];
+            // } else if (category.includes("Drinks")) {
+            //     printerName = printers['Coffee'];
+            // } else {
+            //     printerName = printers['USB'];
+            // }
+    
+            if (printerName) {
+                await this.sendToPrinter(groupedOrders[category], category, printerName);
+            }
+        }
+    }
+    ,
+    async sendToPrinter(orderLines, category, printerName) {
+        const apiUrl = "http://192.168.1.150:5087/print/print";
+    
+        // Format order details for printing
+        let orderDetails = `Order for ${printerName}\nTime: ${this.currentOrder.date_order}\nOrder ID: ${this.currentOrder.tracking_number}\nCategory: ${category}\n\nItems:\n`;
+    
+        orderLines.forEach(line => {
+            orderDetails += `- ${line.qty}x ${line.full_product_name} (Notes: ${line.note || "None"})\n`;
+        });
+    
+        const requestBody = {
+            "TextContent": orderDetails,
+            "PrinterName": printerName
+        };
+    
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Printing failed: ${response.statusText}`);
+            }
+    
+            const responseData = await response.json();
+            console.log("Print request successful:", responseData);
+        } catch (error) {
+            console.error("Error sending print request:", error);
+        }
+    }
 
 });
