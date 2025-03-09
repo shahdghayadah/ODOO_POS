@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <!-- Extend the base template -->
+    <t t-inherit="point_of_sale.TicketScreen" t-inherit-mode="extension">
+        <!-- Change "Load Order" to "Back" in the switchpane section -->
+        <xpath expr="//div[contains(@class, 'switchpane')]//button[contains(@class, 'load-order-button')]//span[@class='d-block']" position="replace">
+            <span class="d-block">Back</span>
+        </xpath>
+
+        <!-- Change "Load Order" to "Back" in the pads section -->
+        <xpath expr="//div[contains(@class, 'pads')]//button[contains(@class, 'load-order-button')]//span[@class='d-block']" position="replace">
+            <span class="d-block">Back</span>
+        </xpath>
+    </t>
+</templates>

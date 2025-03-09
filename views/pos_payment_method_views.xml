@@ -10,8 +10,8 @@
             <xpath expr="//field[@name='use_payment_terminal']" position="after">
                 <!-- Nayax -->
                 <field name="api_key" invisible="use_payment_terminal != 'nayax'" required="use_payment_terminal == 'nayax'"  help="Enter device  IP in the format '000.000.000.000' for Nayax integration."/> 
-                <field name="public_api_key" string="Service Link" invisible="use_payment_terminal != 'nayax'" required="use_payment_terminal == 'nayax'"  /> 
-                <field name="is_regular_payment" string="Regular Payment" invisible="use_payment_terminal != 'nayax'" required="use_payment_terminal == 'nayax'"/>
+                <field name="public_api_key" string="קישור שירות" invisible="use_payment_terminal != 'nayax'" required="use_payment_terminal == 'nayax'"  /> 
+                <field name="is_regular_payment" string= "תשלום רגיל" invisible="use_payment_terminal != 'nayax'" required="use_payment_terminal == 'nayax'"/>
                 <!-- Save API Key Button -->
                 <button name="save_api_key" string="Save API Key" type="object" class="btn-primary"
                         invisible="use_payment_terminal != 'nayax'"/>

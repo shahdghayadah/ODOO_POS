@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
+
+        <xpath expr="//button[@class='btn btn-light btn-lg flex-shrink-0 ms-auto']" position="before">
+            <button class="btn btn-primary btn-sm flex-shrink-0 ms-auto" t-if="!props.showRemainingButtons" t-on-click="downloadReportDRAWER">
+  פתח מגירה</button>
+        </xpath>
+
+        <xpath expr="//t[@t-if='props.showRemainingButtons']/div/OrderlineNoteButton[2]" position="replace"/>
+        <xpath expr="//button[@class='o_pricelist_button btn btn-secondary btn-lg py-5']" position="replace"/>
+        <xpath expr="//t[@t-if='props.showRemainingButtons']/div/OrderlineNoteButton" position="replace"/>
+        <xpath expr="//button[@t-att-class='buttonClass' and @t-on-click='() => this.onClickQuotation()']" position="replace"/>
+        <xpath expr="//button[@class='btn btn-secondary btn-lg py-5' and @t-on-click='() => this.pos.onDeleteOrder(this.pos.get_order())']" position="replace">
+            <button class="btn btn-secondary btn-lg py-5" t-on-click="() => this.pos.onDeleteOrder(this.pos.get_order())">
+                <i class="fa fa-trash me-1" role="img" />
+ בטל הזמנה נוכחית
+            </button>
+        </xpath>
+
+
+
+
+        <xpath expr="//t[@t-if='!props.showRemainingButtons || (ui.isSmall and props.showRemainingButtons)']/OrderlineNoteButton" position="replace">
+            <OrderlineNoteButton class="buttonClass" icon="'fa fa-sticky-note'"/>
+        </xpath>
+
+
+    </t>
+
+</templates>

@@ -23,6 +23,7 @@
 'assets': {
 
     'point_of_sale._assets_pos': [
+
                 "point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.xml",
                 "point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js",
                 "point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.js",
@@ -33,6 +34,12 @@
                 'point_of_sale_1/static/src/app/navbar/popup/**/**',
 
                 'point_of_sale_1/static/src/models/pos_order.js', 
+
+                "point_of_sale_1/static/src/app/screens/product_screen/control_buttons.xml",
+                "point_of_sale_1/static/src/app/screens/product_screen/control_buttons.js",
+
+
+                "point_of_sale_1/static/src/app/screens/ticket_screens/ticket_screen.xml",
 
 
 

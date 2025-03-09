@@ -1,4 +1,3 @@
-from build import _logger
 from odoo import api, fields, models
 
 

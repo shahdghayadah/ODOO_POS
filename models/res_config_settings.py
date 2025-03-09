@@ -1,4 +1,3 @@
-from build import _logger
 from odoo import api, fields, models
 
 
@@ -45,3 +44,9 @@ class ResConfigSettings(models.TransientModel):
         params += ['printer_API']
 
         return params    
+    
+
+
+
+    # AIzaSyD5VBc-uSU2qgUE1orUCDMYged-h5iYN3c
+    # sk-c12a8ed49ec54439a2ec74c363ed07ee

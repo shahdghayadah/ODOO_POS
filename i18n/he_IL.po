@@ -480,3 +480,14 @@ msgstr "פרטי הצ'ק נשמרו בהצלחה"
 #: code:addons/point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js:0
 msgid "שורת תשלום במזומן נבחרה"
 msgstr "שורת תשלום במזומן נבחרה"
+
+#. module: point_of_sale_1
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_payment_method_view_form_inherit_nayax
+msgid "Service Link"
+msgstr "קישור שירות"
+
+#. module: point_of_sale_1
+#: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment_method__is_regular_payment
+#: model_terms:ir.ui.view,arch_db:point_of_sale_1.pos_payment_method_view_form_inherit_nayax
+msgid "Regular Payment"
+msgstr "תשלום רגיל"
