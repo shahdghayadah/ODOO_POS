@@ -320,35 +320,38 @@ patch(PaymentScreenPaymentLines.prototype, {
                 { type: "danger" }
             );}
         else {if (result.result.statusCode == 0) {
+
             this.selectedPaymentLines.push(paymentline);
             await this.checkPaymentLinesAmountSum(this.selectedPaymentLines);
             this.notification.add(
                 _t("התשלום הושלם בהצלחה."),
                 {
                     type: "success",
-                    sticky: true,
-
                 }
+
             );
         }else {
             if (result.result.statusCode == 998) {
                 console.log('sendPaymentCancel')
+
                 this.notification.add(
                     _t("העסקה בוטלה על ידי מסוף התשלום."),
                     {
                         type: "danger",
-                        sticky: true,
                     }
                 );
                 await this.props.deleteLine(paymentline.uuid);
             }else{
                 
                 console.log('sendPaymentCancel')
+                paymentline.expDate= result.result.expDate
+                paymentline.card_no= result.result.cardNumber
+                
+                console.log(paymentline)
                 this.notification.add(
                     _t("התשלום המקוון נכשל מהסיבה הבאה: " + result.result.statusMessage),
                     {
                         type: "danger",
-                        sticky: true,
                     }
                 );
             }

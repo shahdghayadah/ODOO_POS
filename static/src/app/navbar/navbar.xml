@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
     <t t-inherit="point_of_sale.Navbar" t-inherit-mode="extension">
         <xpath expr="//div[@class='pos-centerheader d-flex justify-content-center overflow-hidden']/img[@class='pos-logo pos-logo mw-100']" position="attributes">
-            <attribute name="src">/pos_night_mode/static/img/logo4.png</attribute>
+            <attribute name="src">/point_of_sale_1/static/img/logo4.png</attribute>
         </xpath>
     </t>
 </templates>

@@ -1,5 +1,5 @@
 // Define color variables
-$o-community-color: #FFCA00;
+$o-community-color: rgb(255, 204, 0);
 $o-black-color: #000000 !important;
 $o-white-color: #ffffff !important;
 $o-light-gray-color: #f2f2f2 !important;
@@ -8,16 +8,28 @@ $o-dark-gray-color: #6c757d !important;
 .text-bg-info {
     background-color: $o-black-color !important;
 }
-.o_main_navbar .o_menu_sections .o_nav_entry, .o_main_navbar .o_menu_sections .dropdown-toggle {
+
+.o_menu_sections .o_nav_entry,
+.o_menu_sections .dropdown-toggle {
     background: #6c757d;
     border: 1px solid transparent;
 }
-/* Button styles */
-.o_main_navbar {
 
-    border-bottom: 1px solid #6c757d;
-    background: #6c757d;
+.o_field_statusbar>.o_statusbar_status>.o_arrow_button:not(.d-none):disabled:not(.o_arrow_button_current),
+.o_field_statusbar_duration>.o_statusbar_status>.o_arrow_button:not(.d-none):disabled:not(.o_arrow_button_current),
+.o_field_statusbar>.o_statusbar_status>.o_arrow_button:not(.d-none):disabled:not(.o_arrow_button_current):hover,
+.o_field_statusbar>.o_statusbar_status>.o_arrow_button:not(.d-none):disabled:not(.o_arrow_button_current):focus {
+    color: rgba(0, 0, 0, 0.76) !important;
+    border: 1px solid rgba(0, 0, 0, 0.76) !important;
+
 }
+
+.o_field_statusbar>.o_statusbar_status,
+.o_field_statusbar_duration>.o_statusbar_status {
+
+    --o-statusbar-border-active: #000000;
+}
+
 // Override .btn-primary font color to black
 
 .form-check-input:checked {
@@ -95,7 +107,7 @@ a {
     --alert-border-color: $o-community-color;
 }
 
-.o_main_navbar .o_menu_systray .badge {
+.o_menu_systray .badge {
     background-color: $o-community-color;
     color: #000000;
 }
@@ -228,8 +240,22 @@ body {
 }
 
 
-.btn:disabled, .btn.disabled, fieldset:disabled .btn {
-    background-color: #6c757d !important;
+.btn:disabled,
+.btn.disabled,
+fieldset:disabled .btn {
+    opacity: 1 !important;
+    /* Ensure full opacity */
+    background-color: #ffffff !important;
+    /* Override background */
+    /*  Override text color */
+    border-color: #000000 !important;
+    /* Override border color */
+    filter: grayscale(0%) !important;
+    /* Remove any grayscale filters */
+    -webkit-filter: grayscale(0%) !important;
+    /* For older Safari */
+    box-shadow: none !important;
+    /* remove any shadow */
 }
 
 
@@ -502,7 +528,7 @@ body {
     --btn-focus-shadow-rgba: 0 0 0 0.5;
     --btn-disabled-color: #ffffff;
     --btn-disabled-bg: #000000;
-    --btn-disabled-border-color: #FFF;
+    --btn-disabled-border-color: #ffffff;
 }
 
 
@@ -586,15 +612,76 @@ body {
     border-color: #FFCA00 !important;
 }
 
+a {
+    color: #000000;
+}
+
 .btn-outline-primary {
     color: $o-black-color !important;
     --btn-bg: $o-black-color !important;
     --btn-hover-border-color: $o-community-color !important;
     --btn-hover-color: $o-community-color !important;
     --btn-hover-bg: $o-white-color !important;
+    --btn-color: #000000;
+    --btn-border-color: #000000;
+}
+
+.o-form-buttonbox .oe_stat_button .o_button_icon {
+    color: #000000;
+}
+
+.o-form-buttonbox .o_pie_value,
+.o-form-buttonbox .oe_stat_button .o_stat_info .o_stat_value,
+.o-form-buttonbox .oe_stat_button>span .o_stat_value,
+.o-form-buttonbox .oe_stat_button .o_field_statinfo .o_stat_value {
+
+    color: var(--o-stat-text-color, #000000);
+}
+
+.o_main_navbar .o_menu_brand,
+.o_main_navbar .o_navbar_breadcrumbs,
+.o_main_navbar .o_navbar_breadcrumbs .btn,
+.o_main_navbar,
+.o_navbar {
+    color: #000000;
+    background-color: #ffffff;
+    background: #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.o_main_navbar .o_nav_entry,
+.o_main_navbar .dropdown-toggle:not(.o-dropdown-toggle-custo):hover {
+    color: #ffffff;
+    background-color: #222020;
+    background: #222020;
+    border-bottom: 1px solid #222020;
+}
+
+.o_tour_pointer .o_tour_pointer_tip {
+
+    background-image: radial-gradient(#000000, var(--TourPointer__color));
+}
+
+.o_main_navbar .o_menu_brand,
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle,
+.o_main_navbar .o_nav_entry,
+.o_main_navbar .dropdown-toggle:not(.o-dropdown-toggle-custo),
+.o_main_navbar .o_menu_toggle,
+.o_main_navbar,
+.o_main_navbar .o_menu_sections .o_nav_entry,
+.o_home_menu_background:not(.o_home_menu_background_custom):not(.o_in_studio) .o_main_navbar {
+    color: #ffffff;
+    background-color: #222020;
+    background: #222020;
+    border-bottom: 1px solid #222020;
+}
+
+.o_main_navbar .o_menu_brand:hover {
+    color: #ffffff;
 }
 
 .btn-secondary {
+    --btn-color: #000000;
     color: $o-black-color !important;
     --btn-bg: $o-white-color !important;
     --btn-hover-border-color: $o-community-color !important;
@@ -608,4 +695,8 @@ body {
     --btn-disabled-color: $o-black-color ;
     --btn-disabled-bg: $o-white-color;
     --btn-disabled-border-color: $o-community-color ;
+}
+
+.btn-danger {
+    --btn-color: #000000;
 }

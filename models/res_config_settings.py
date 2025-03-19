@@ -45,8 +45,3 @@ class ResConfigSettings(models.TransientModel):
 
         return params    
     
-
-
-
-    # AIzaSyD5VBc-uSU2qgUE1orUCDMYged-h5iYN3c
-    # sk-c12a8ed49ec54439a2ec74c363ed07ee
