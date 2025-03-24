@@ -1,0 +1,14 @@
+<odoo>
+    <record id="product_template_view_form_inherit_multi_barcodes_kad" model="ir.ui.view">
+        <field name="name">product.template.view.form.inherit.multi.barcodes.kad</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='inventory']" position="after">
+                <page string="Additional Barcodes">
+                    <field name="template_multi_barcodes_ids"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

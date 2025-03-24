@@ -117,7 +117,84 @@ class PosSession(models.Model):
                     'amount_authorized_diff': self.config_id.amount_authorized_diff if self.config_id.set_maximum_difference else None,
                 }
         print(data)
-        return data
-    
+        return data    
+    def find_product_by_barcode(self, barcode, config_id):
+        # Load product and packaging fields
+        product_fields = self.env['product.product']._load_pos_data_fields(config_id)
+        product_packaging_fields = self.env['product.packaging']._load_pos_data_fields(config_id)
+        product_context = {**self.env.context, 'display_default_code': False}
+
+        # ✅ Standard barcode search on product.product
+        product = self.env['product.product'].search([
+            ('barcode', '=', barcode),
+            ('sale_ok', '=', True),
+            ('available_in_pos', '=', True),
+        ])
+
+        if product:
+            product_data = product.with_context(product_context).read(product_fields, load=False)
+            return {'product.product': product_data if product_data else []}
+
+        # ✅ Search in multi.barcode.products
+        multi_barcode_product = self.env['multi.barcode.products'].search([('multi_barcode', '=', barcode)], limit=1)
+        if multi_barcode_product:
+            product = self.env['product.product'].search([
+                ('product_tmpl_id', '=', multi_barcode_product.template_multi_id.id),
+                ('sale_ok', '=', True),
+                ('available_in_pos', '=', True),
+            ], limit=1)
+            if product:
+                product_data = product.with_context(product_context).read(product_fields, load=False)
+                return {'product.product': product_data if product_data else []}
+
+        # ✅ PLU barcode detection (13 digits, starts with '2')
+        if len(barcode) == 13 and barcode[0] == '2':
+            # Extract Product Code (6 digits) & Weight/Price (5 digits)
+            product_code = barcode[1:7]  # 6-digit product code
+            weight_or_price = barcode[7:12]  # 5-digit weight/price
+
+            # Convert to integer and remove leading zeros
+            product_code = str(int(product_code))  # "000090" → "90"
+
+            # Search for the product using the ID
+            product = self.env['product.product'].search([
+                ('id', '=', product_code),  # Searching by ID instead of default_code
+                ('sale_ok', '=', True),
+                ('available_in_pos', '=', True),
+            ])
+
+            if product:
+                product_data = product.with_context(product_context).read(product_fields, load=False)
+                if product_data:  # Ensure it's not empty before accessing
+                    product_data = product_data[0]
+
+                    # Check if the product is weight-based
+                    is_weighed = product.product_tmpl_id.to_weight
+                    if is_weighed:
+                        product_data['plu_weight'] = int(weight_or_price) / 1000  # Convert grams to kg
+                    else:
+                        product_data['plu_weight'] = 1  # Default weight for non-weighed items
+                        product_data['lst_price'] = int(weight_or_price) / 100  # Convert to price format
+
+                    return {'product.product': [product_data]}  # Ensure it's an array
+
+                else:
+                    return {'product.product': []}  # Return an empty array if data is empty
+
+        # ✅ Check for product packaging
+        packaging = self.env['product.packaging'].search([('barcode', '=', barcode)])
+        if packaging and packaging.product_id:
+            product_data = packaging.product_id.with_context(product_context).read(product_fields, load=False)
+            packaging_data = packaging.read(product_packaging_fields, load=False)
+            return {
+                'product.product': product_data,
+                'product.packaging': packaging_data,
+            }
+
+        # Default return when no product or packaging is found
+        return {
+            'product.product': [],
+            'product.packaging': [],
+        }
 
     

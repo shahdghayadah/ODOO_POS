@@ -187,7 +187,7 @@ patch(PaymentScreen.prototype, {
         const orderLines = this.currentOrder.get_orderlines();
         const printerData = await this.orm.searchRead("printer.kad", [], ['name', 'pos_category_id']);
         console.log(printerData);  // Log the printer data from searchRead
-    
+
         // Create a dynamic mapping of printers based on the pos_category_id
         const printers = printerData.reduce((acc, item) => {
             // Assuming pos_category_id is an array with [ID, Name], and we map it to the printer name
@@ -234,13 +234,20 @@ patch(PaymentScreen.prototype, {
     }
     ,
     async sendToPrinter(orderLines, category, printerName) {
-        const apiUrl = "http://192.168.1.150:5087/print/print";
-    
+        const result =  await this.orm.searchRead("res.config.settings", [], ['printer_API']);
+        const apiUrl = result[0].printer_API;
         // Format order details for printing
         let orderDetails = `Order for ${printerName}\nTime: ${this.currentOrder.date_order}\nOrder ID: ${this.currentOrder.tracking_number}\nCategory: ${category}\n\nItems:\n`;
     
         orderLines.forEach(line => {
-            orderDetails += `- ${line.qty}x ${line.full_product_name} (Notes: ${line.note || "None"})\n`;
+            orderDetails += `- ${line.qty}x ${line.full_product_name} \n`;
+            if (line.note) {
+
+                orderDetails += ` (Notes: ${line.note})`;
+            }
+
+            orderDetails += `\n`;
+
         });
     
         const requestBody = {
