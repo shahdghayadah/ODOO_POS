@@ -120,7 +120,7 @@ class PosSession(models.Model):
                 }
         print(data)
         return data
-
+    
 
 
 

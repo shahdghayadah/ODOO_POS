@@ -5,7 +5,6 @@ import { patch } from "@web/core/utils/patch";
 patch(PosOrder.prototype, {
 
 add_paymentline(payment_method) {
-        console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
         this.assert_editable();
         if (this.electronic_payment_in_progress()) {
             return false;
