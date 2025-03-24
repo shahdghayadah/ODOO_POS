@@ -23,8 +23,8 @@ export async function sendTransactionRequest(amount, vuid, api_key, tranType, pu
 
     console.log("Payload:", payload);
     // Send the request
-    const url = `${public_api_key}`;
-
+    // const url = `${public_api_key}`;
+    const url = 'http://192.168.1.13:8080/SPICy'
     try {
         const response = await fetch(url, {
             method: "POST",
