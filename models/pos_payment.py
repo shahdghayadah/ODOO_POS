@@ -5,8 +5,8 @@ class PosPayment(models.Model):
     _inherit = "pos.payment"
 
     check_number = fields.Char(string='Number', default="N/A",required=False) #changed required to false
-    check_transfer_amount = fields.Char(string='Amount', default="N/A",required=False)
-    check_transfer_date = fields.Char(string='Date', default="N/A",required=False)
+    check_transfer_amount = fields.Char(string='total Amount', default="N/A",required=False)
+    check_transfer_date = fields.Char(string='payment  Date', default="N/A",required=False)
     check_customer_name = fields.Char(string='Customer Name', default="N/A",required=False) #corrected misspelling
     transfer_ref = fields.Char(string='Transfer Ref', default="N/A",required=False) #corrected string and add the ref
     phone_number = fields.Char(string='Phone Number', default="N/A",required=False)
@@ -34,20 +34,20 @@ class PosPayment(models.Model):
         store=True,
     )
     
-    @api.depends('payment_method_id.journal_id.type')
+    @api.depends('payment_method_id')
     def _compute_is_check_payment(self):
         for record in self:
-            record.is_check_payment = record.payment_method_id.journal_id.type == 'check'
+            record.is_check_payment = record.payment_method_id.journal_type == 'check'
 
-    @api.depends('payment_method_id.journal_id.type')
+    @api.depends('payment_method_id')
     def _compute_is_transfer_payment(self):
         for record in self:
-            record.is_transfer = record.payment_method_id.journal_id.type == 'BankTransfer'
+            record.is_transfer = record.payment_method_id.journal_type == 'BankTransfer'
 
-    @api.depends('payment_method_id.journal_id.type')
+    @api.depends('payment_method_id')
     def _compute_is_bit_payment(self):
         for record in self:
-            record.is_bit = record.payment_method_id.journal_id.type == 'bit'
+            record.is_bit = record.payment_method_id.journal_type == 'bit'
 
 
     @api.depends('payment_method_id.journal_id.type')

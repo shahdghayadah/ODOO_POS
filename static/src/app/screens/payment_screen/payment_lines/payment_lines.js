@@ -31,7 +31,7 @@ patch(PaymentScreenPaymentLines.prototype, {
 
         console.log(paymentline)
         this.props.selectLine(paymentline.uuid);
-        if (paymentline.payment_method_id?.type === 'check') {
+        if (paymentline.payment_method_id?.journal_type === 'check') {
             console.log( this.pos.currentOrder)
             console.log(this.pos)
             let result1;
@@ -69,7 +69,7 @@ patch(PaymentScreenPaymentLines.prototype, {
         }
         return;
         }
-        else{ if (paymentline.payment_method_id?.type === 'BankTransfer'){
+        else{ if (paymentline.payment_method_id?.journal_type === 'BankTransfer'){
             let result1;
             try {
             result1 = await makeAwaitable(this.dialog, BankTransferPopup, {
@@ -104,7 +104,7 @@ patch(PaymentScreenPaymentLines.prototype, {
         }
              return ;
             
-            }else if (paymentline.payment_method_id?.type === 'bit'){
+            }else if (paymentline.payment_method_id?.journal_type === 'bit'){
                 let result1;
                 try {
                 result1 = await makeAwaitable(this.dialog, BitPaymentPopup, {

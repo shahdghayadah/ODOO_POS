@@ -17,7 +17,12 @@ class PosPaymentMethod(models.Model):
     api_key = fields.Char(string="Payment Device IP ", copy=False)
     public_api_key = fields.Char(string="Public IP", copy=False)
     is_regular_payment = fields.Boolean(string="Regular Payment", default=True)
-    type = fields.Selection(selection=[('cash', 'Cash'), ('bank', 'Bank'), ('pay_later', 'Customer Account') , ('check', 'Check') ,('BankTransfer','Bank transfer' )  ,('bit' ,'Bit')], compute="_compute_type")
+    journal_type = fields.Selection(selection=[('check', 'Check'),
+                                                   ('BankTransfer', 'Bank transfer'),
+                                                   ('bit', 'Bit'),
+                                                   ('cash', 'Cash'),
+                                                   ('credit_card', 'Credit Card'),
+                                                   ] )
 
     def _get_payment_terminal_selection(self):
         return super()._get_payment_terminal_selection() + [('nayax', 'Nayax')]
@@ -28,11 +33,10 @@ class PosPaymentMethod(models.Model):
         params += ['api_key']
         params += ['public_api_key']
         params += ['is_regular_payment']
+        params += ['journal_type']
 
         return params
     
-
-
     def save_api_key(self):
         for record in self:
             if not record.api_key:
@@ -40,18 +44,7 @@ class PosPaymentMethod(models.Model):
             _logger.info("API key saved for payment method: %s", record.name)
             # Here, you can add any logic needed to use the api_key for other purposes
             # For example, updating a related model or making an API call
-            record.write({'api_key': record.api_key , 'public_api_key': record.public_api_key , 'is_regular_payment': record.is_regular_payment})
+            record.write({'api_key': record.api_key , 'public_api_key': record.public_api_key , 'is_regular_payment': record.is_regular_payment , 'journal_type': record.journal_type})
             return True
         
 
-    @api.depends('journal_id', 'split_transactions')
-    def _compute_type(self):
-        for pm in self:
-            try:
-                if pm.journal_id and pm.journal_id.type in {'cash', 'bank', 'check','BankTransfer' ,'bit'}:
-                    pm.type = pm.journal_id.type
-                else:
-                    pm.type = 'pay_later'
-            except Exception as e:
-                _logger.error("Error computing type for %s: %s", pm.name, str(e))
-                pm.type = 'pay_later'  # Fallback to a default value

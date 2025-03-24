@@ -8,10 +8,11 @@ import { usePos } from "@point_of_sale/app/store/pos_hook";
 import { useService } from "@web/core/utils/hooks";
 import {  useState } from "@odoo/owl";
 import { useAsyncLockedMethod } from "@point_of_sale/app/utils/hooks";
- 
+import { ReportZPopup } from "@point_of_sale_1/app/navbar/popup/report_z/ReportZPopup";  // Import the new popup
+import { makeAwaitable } from "@point_of_sale/app/store/make_awaitable_dialog";
+
 patch(ClosePosPopup.prototype, {
- 
-    setup() {
+    setup( ) {
         this.pos = usePos();
         this.report = useService("report");
         this.hardwareProxy = useService("hardware_proxy");
@@ -20,9 +21,54 @@ patch(ClosePosPopup.prototype, {
         this.state = useState(this.getInitialState());
         this.confirm = useAsyncLockedMethod(this.confirm);
         this.orm = useService("orm");
+
     },
-    // all the code under here is done by shahd and rami
-    // New Function: downloadReportX
+    async downloadReportZ() {
+        let result1
+        
+         result1 = await makeAwaitable(this.dialog, ReportZPopup, {
+            title: "insert dates ",
+            confirm: async (result1) => {
+                if (result1.confirmed) {
+
+                console.log(result1)
+                const response = await this.pos.data.call(
+                    "pos.session",
+                    "get_closing_control_data_between_dates",
+                    [this.pos.session.id , result1.payload.dateFrom, result1.payload.dateTo]
+
+                );
+                console.log(response)
+                const reportContent = this.generateReportZBetweenDates(response , result1.payload.dateFrom ,result1.payload.dateTo);
+
+                this.printReportZ(reportContent);
+                let result;
+                const paymentTemplates = await this.orm.searchRead("pos.payment.method", [], ['use_payment_terminal']);
+        
+                for (const paymentTemplate of paymentTemplates) {
+                    if (paymentTemplate.use_payment_terminal === 'nayax') {
+                        result = await sendDoPeriodic(paymentTemplates[0].public_api_key, paymentTemplates[0].api_key);
+                        break; // Exit the loop early if we find a match
+                    }
+                }
+                console.log("paymentTemplates", paymentTemplates)
+                return}
+                else{
+                    const reportContent = this.generateReportZContent();
+                    this.printReportZ(reportContent);
+
+                }
+            },
+            close: () => {
+                const reportContent = this.generateReportZContent();
+                this.printReportZ(reportContent);
+            },
+            getPayload: (payload) => {
+                result1=payload
+            }
+        });
+
+    },
     downloadReportX() {
         const reportContent = this.generateReportXContent();
         this.printReportX(reportContent);
@@ -36,11 +82,16 @@ patch(ClosePosPopup.prototype, {
         const minutes = String(date.getMinutes()).padStart(2, '0');
         return `${day}/${month}/${year} ${hours}:${minutes}`;
     },
+
+    downloadReportZWhenCloseRegi() {
+        const reportContent = this.generateReportZContent();
+        this.printReportZ(reportContent);
+    },
     async confirm() {
         console.log("confirm")
         if (!this.pos.config.cash_control || this.env.utils.floatIsZero(this.getMaxDifference())) {
             await this.closeSession();
-            this.downloadReportZ();
+            this.downloadReportZWhenCloseRegi();
             return;
         }
         if (this.hasUserAuthority()) {
@@ -53,7 +104,7 @@ patch(ClosePosPopup.prototype, {
                 cancelLabel: _t("Discard"),
             });
             if (response) {
-                this.downloadReportZ();
+                this.downloadReportZWhenCloseRegi();
                 await  this.closeSession();
                 return;
  
@@ -197,23 +248,251 @@ patch(ClosePosPopup.prototype, {
             console.error('Failed to open print window. Please allow pop-ups.');
         }
     },
-    async downloadReportZ() {
-        const reportContent = this.generateReportZContent();
-        this.printReportZ(reportContent);
-        let result;
-        
-        const paymentTemplates = await this.orm.searchRead("pos.payment.method", [], ['use_payment_terminal']);
 
-        for (const paymentTemplate of paymentTemplates) {
-            if (paymentTemplate.use_payment_terminal === 'nayax') {
-                result = await sendDoPeriodic(paymentTemplates[0].public_api_key, paymentTemplates[0].api_key);
-                break; // Exit the loop early if we find a match
-            }
-        }
-        console.log("paymentTemplates", paymentTemplates)
-    },
     totalAmount: 0,
+     generateReportZBetweenDates(orders_details,dateFrom ,dateTo) {
+        console.log(orders_details)
+        let content = "";
+   
+        // === Header with Company Name and VAT ID ===
+        content += `<div style="display: flex; flex-direction: column; align-items: center; direction: rtl; width: 100%;">
+            <div style="font-size: 18px; line-height: 0.4; text-align: center; width: 100%;">
+                <div>${orders_details.company_name}</div>
+                <div>${orders_details.company_street}</div>
+                <div>טלפון ${orders_details.company_phone}</div>
+                <div>ח.פ ${orders_details.company_vat}</div>
+                <div>מסוף ${orders_details.company_registry}</div>
+                <div>דו"ח Z</div>
+            </div>
+            </div>\n`;
  
+        content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 5px 0; font-size:1px;'></div>\n";
+ 
+        // Format and display Opening Date
+        const openingDate = new Date(dateFrom);
+        const formattedOpeningDate = this.formatDateAndTime(openingDate);
+        content += `<div style="display: flex; align-items: flex-start; margin-bottom: 0; direction: rtl; text-align: right;">
+                    <div style="flex: 1;">תאריך פתיחה:</div>
+                    <div style="flex: 1; word-wrap: break-word;">${formattedOpeningDate}</div>
+                </div>\n`;
+ 
+        // Format and display Report Date
+        const reportDate = new Date(dateTo);
+        const formattedReportDate = this.formatDateAndTime(reportDate);
+        content += `<div style="display: flex; align-items: flex-start; margin-bottom: 0; direction: rtl; text-align: right;">
+                    <div style="flex: 1;">תאריך דוח:</div>
+                    <div style="flex: 1; word-wrap: break-word;">${formattedReportDate}</div>
+                </div>\n`;
+ 
+        content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 10px 0; font-size:1px;'></div>\n";
+ 
+        // === Orders Details Section ===
+        content += `<div style="direction: rtl; text-align: right;">קטגוריות הזמנות:</div>\n`;
+        if (orders_details && Array.isArray(orders_details.orders_details.orders) && orders_details.orders_details.orders.length > 0) {
+            const orders = orders_details.orders_details.orders;
+ 
+            // --- Sales Section ---
+            content += `<div style='font-weight: bold; margin-top: 10px; direction: rtl; text-align: right;'>מכירות</div>\n`;
+            content += `<table style='width:100%; border-collapse: collapse; border: 1px solid #000; direction: rtl; text-align: right;'>
+                            <thead style='border-bottom: 1px solid #000;'>
+                                <tr>
+                                    <th style='padding: 5px;'>קטגוריה</th>
+                                    <th style='padding: 5px;'>כמות</th>
+                                    <th style='padding: 5px;'>סכום</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+            let totalSalesQuantity = 0;
+            let totalSalesAmount = 0;
+ 
+            orders.forEach(category => {
+                const hasSalesProducts = category.products && category.products.some(line => line.qty > 0);
+                if (hasSalesProducts) {
+                    let categoryTotalQty = 0;
+                    let categoryTotalAmount = 0;
+ 
+                    if (category.products && category.products.length > 0) {
+                        const salesProducts = category.products.filter(line => line.qty > 0);
+                        salesProducts.forEach(line => {
+                            categoryTotalQty += line.qty;
+                            categoryTotalAmount += line.price_subtotal_incl;
+                        });
+                        totalSalesQuantity += categoryTotalQty;
+                        totalSalesAmount += categoryTotalAmount;
+                    }
+                    content += `
+                                <tr style='border-bottom: 1px solid #eee;'>
+                                    <td style='padding: 5px;'>${category.name}</td>
+                                    <td style='padding: 5px;'>${categoryTotalQty}</td>
+                                    <td style='padding: 5px;'>${this.env.utils.formatCurrency(categoryTotalAmount)}</td>
+                                </tr>
+                            `;
+                }
+            });
+            const totalSalesTax = totalSalesAmount * (orders_details.company / 100);
+            const totalPaymentsWithoutTax = totalSalesAmount - totalSalesTax;
+            content += `
+                                </tbody>
+                              <tfoot style='border-top: 1px solid #000;'>
+                              <tr>
+                                    <td style='padding: 5px; font-weight: bold;'>סכום ללא מע"מ</td>
+                                    <td style='padding: 5px;'></td>
+                                    <td style='padding: 5px;'>${this.env.utils.formatCurrency(totalPaymentsWithoutTax)}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding: 5px; font-weight: bold;'>סכום מע"מ</td>
+                                    <td style='padding: 5px;'></td>
+                                    <td style='padding: 5px;' colspan='2'>${this.env.utils.formatCurrency(totalSalesTax)}</td>
+                                </tr>
+                            <tr>
+                                <td style='padding: 5px; font-weight: bold;'> כולל מע"מ סה"כ</td>
+                                <td style='padding: 5px;'>${totalSalesQuantity}</td>
+                                <td style='padding: 5px;'>${this.env.utils.formatCurrency(totalSalesAmount)}</td>
+                                </tr>
+                               
+                               
+                            </tfoot>
+                            </table>\n`;
+ 
+ 
+            content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 10px 0; font-size:1px;'></div>\n";
+ 
+            // --- Refunds Section ---
+            content += `<div style='font-weight: bold; margin-top: 10px; direction: rtl; text-align: right;'>החזרים</div>\n`;
+            content += `<table style='width:100%; border-collapse: collapse; border: 1px solid #000; direction: rtl; text-align: right;'>
+                    <thead style='border-bottom: 1px solid #000;'>
+                        <tr>
+                            <th style='padding: 5px;'>קטגוריה</th>
+                            <th style='padding: 5px;'>כמות</th>
+                            <th style='padding: 5px;'>סכום</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            let totalRefundQuantity = 0;
+            let totalRefundAmount = 0;
+            orders.forEach(category => {
+                const hasRefundProducts = category.products && category.products.some(line => line.qty < 0);
+                if (hasRefundProducts) {
+                    let categoryTotalQty = 0;
+                    let categoryTotalAmount = 0;
+                    if (category.products && category.products.length > 0) {
+                        const refundProducts = category.products.filter(line => line.qty < 0);
+                        refundProducts.forEach(line => {
+                            categoryTotalQty += Math.abs(line.qty); // Use Math.abs() here
+                            categoryTotalAmount += line.price_subtotal_incl;
+                        });
+                        totalRefundQuantity += categoryTotalQty;
+                        totalRefundAmount += categoryTotalAmount;
+                    }
+                    content += `
+                            <tr style='border-bottom: 1px solid #eee;'>
+                                <td style='padding: 5px;'>${category.name}</td>
+                                <td style='padding: 5px;'>${categoryTotalQty}</td>
+                                <td style='padding: 5px;'>${this.env.utils.formatCurrency(categoryTotalAmount)}</td>
+                            </tr>
+                        `;
+                }
+            });
+            const totalRefundTax = totalRefundAmount * (orders_details.company / 100);
+            const totalRefundsWithoutTax = totalRefundAmount - totalRefundTax;
+            content += `
+                </tbody>
+                <tfoot style='border-top: 1px solid #000;'>
+                    <tr>
+                        <td style='padding: 5px; font-weight: bold;'>סכום ללא מע"מ</td>
+                        <td style='padding: 5px;'></td>
+                        <td style='padding: 5px;'>${this.env.utils.formatCurrency(totalRefundsWithoutTax)}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 5px; font-weight: bold;'>סכום מע"מ</td>
+                        <td style='padding: 5px;'></td>
+                        <td style='padding: 5px;' colspan='2'>${this.env.utils.formatCurrency(totalRefundTax)}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 5px; font-weight: bold;'>סה"כ</td>
+                        <td style='padding: 5px;'>${totalRefundQuantity}</td>
+                        <td style='padding: 5px;'>${this.env.utils.formatCurrency(totalRefundAmount)}</td>
+                    </tr>
+ 
+ 
+                </tfoot>
+                </table>\n`;
+ 
+            content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 10px 0; font-size:1px;'></div>\n";
+        } else {
+            content += `<div style="direction: rtl; text-align: right;">לא נמצאו הזמנות.</div>\n`;
+        }
+ 
+ 
+        // === Cash Control Summary Section ===
+        // Add Payment Method and Tax Information Summary (Combined)
+        content += `<div style="direction: rtl; text-align: right;">סיכום תשלומים ומסים:</div>\n`;
+        content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 10px 0; font-size:1px;'></div>\n";
+        content += `<table style='width:100%; border-collapse: collapse; border: 1px solid #000; direction: rtl; text-align: right;'>
+                    <thead style='border-bottom: 1px solid #000;'>
+                        <tr>
+                            <th style='padding: 5px;'>אמצעי תשלום</th>
+                            <th style='padding: 5px;'>סכום</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+ 
+        // Cash Payment
+        const expectedCash = orders_details.default_cash_details.amount || 0.00;
+        content += `
+                    <tr style='border-bottom: 1px solid #eee;'>
+                        <td style='padding: 5px;'>מזומן</td>
+                        <td style='padding: 5px;'>${this.env.utils.formatCurrency(expectedCash)}</td>
+                    </tr>
+                `;
+ 
+        //Online Payment Methods
+        let totalPayments = expectedCash;
+        orders_details.non_cash_payment_methods.forEach(pm => {
+            content += `
+                        <tr style='border-bottom: 1px solid #eee;'>
+                            <td style='padding: 5px;'>${pm.name}</td>
+                            <td style='padding: 5px;'>${this.env.utils.formatCurrency(pm.amount)}</td>
+                        </tr>
+                    `;
+            totalPayments += pm.amount;
+        });
+ 
+        // Calculate total tax
+        const totalTax = orders_details.total_cash_payment * (orders_details.company / 100);
+ 
+        // Calculate total payments without tax
+        const totalPaymentsWithoutTax = totalPayments - totalTax;
+ 
+        // Add Total Payments and Total Tax to the table footer
+        content += `
+                    </tbody>
+                    <tfoot style='border-top: 1px solid #000;'>
+                        <tr>
+                            <td style='padding: 5px; font-weight: bold;'>סך הכל</td>
+                            <td style='padding: 5px;'>${this.env.utils.formatCurrency(totalPayments)}</td>
+                        </tr>
+                    </tfoot>
+                    </table>
+                    `;
+ 
+        // === Notes Section ===
+        if (this.state.notes) {
+            content += `<div style="direction: rtl; text-align: right;">הערות:</div>\n`;
+            content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 10px 0; font-size:1px;'></div>\n";
+            content += `<div style="direction: rtl; text-align: right;">${this.state.notes}</div>\n`;
+            content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 10px 0; font-size:1px;'></div>\n";
+        }
+ 
+        //Cashier Information in Footer
+        if (this.pos.cashier) {
+            content += `<div style="display: flex; align-items: flex-start; margin-top: 10px; font-size: 0.9em; direction: rtl; text-align: right;">
+                           <div style="flex: 1;">שם הקופאי:</div>
+                           <div style="flex: 1; word-wrap: break-word;">${this.pos.cashier.name}</div>
+                       </div>\n`;
+        }
+        return content;
+    },
     generateReportZContent() {
         let content = "";
    
@@ -481,3 +760,17 @@ patch(ClosePosPopup.prototype, {
     }
 });
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
