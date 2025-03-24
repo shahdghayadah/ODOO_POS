@@ -93,7 +93,6 @@ patch(ControlButtons.prototype, {
         const enteredValue = await makeAwaitable(this.dialog, NumberPopup, {
             title: title,
             startingValue: this.pos.config.discount_pc || 0,
-            isInputSelected: true,
         });
     
         if (!enteredValue) { // User cancelled

@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_printer_kad,printer.kad Access,model_printer_kad,,1,1,1,1
+access_multi_barcode_products,multi.barcode.products Access,model_multi_barcode_products,,1,1,1,1
