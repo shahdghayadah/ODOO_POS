@@ -10,8 +10,6 @@ patch(Orderline.prototype, {
     },
 
     incrementQty() {
-        const line = this.props.line;
-        // Get the actual orderline object from the POS order
         const order = this.pos.get_order();
         const orderline = order.get_selected_orderline();
         
@@ -20,16 +18,11 @@ patch(Orderline.prototype, {
             const currentQty = orderline.get_quantity();
             orderline.set_quantity(currentQty + 1);
             
-            // Update UI - remove disabled class from minus button
-            const minusButton = this.el.querySelector('.qty-button.minus');
-            if (minusButton) {
-                minusButton.classList.remove('disabled');
-            }
+            // Don't try to access DOM here - will be handled by reactive updates
         }
     },
 
     decrementQty() {
-        const line = this.props.line;
         const order = this.pos.get_order();
         const orderline = order.get_selected_orderline();
         
@@ -39,58 +32,39 @@ patch(Orderline.prototype, {
             if (currentQty > 1) {
                 // Decrease quantity if more than 1
                 orderline.set_quantity(currentQty - 1);
-                
-                // If quantity is now 1, disable the minus button
-                if (currentQty - 1 === 1) {
-                    const minusButton = this.el.querySelector('.qty-button.minus');
-                    if (minusButton) {
-                        minusButton.classList.add('disabled');
-                    }
-                }
+                // DOM updates will be handled reactively
             } else {
-                // Remove line if quantity would be 0
-                order.remove_orderline(orderline);
+                // dont do anything if quantity is already 1
+
             }
         }
     },
     
-    // Update XML template to properly show disabled state
-    mounted() {
-        super.mounted && super.mounted();
+    // Let the CSS handle the disabled state based on data attributes
+    onPatched() {
         this.updateButtonState();
     },
     
-    willUpdateProps() {
-        super.willUpdateProps && super.willUpdateProps();
+    onMounted() {
         this.updateButtonState();
     },
     
     updateButtonState() {
         if (!this.el) return;
         
-        // Check if current line is selected
         const line = this.props.line;
-        const order = this.pos.get_order();
-        const selectedLine = order.get_selected_orderline();
-        const isSelected = selectedLine && selectedLine.id === line.id;
+        const qty = line.get_quantity();
         
-        // Add/remove selected class to control visibility
-        if (isSelected) {
-            this.el.classList.add('selected');
-        } else {
-            this.el.classList.remove('selected');
-        }
+        // Set data attribute for quantity
+        this.el.setAttribute('data-qty', qty);
         
-        // Check quantity for minus button state
-        if (isSelected) {
-            const qty = line.get_quantity();
-            const minusButton = this.el.querySelector('.qty-button.minus');
-            if (minusButton) {
-                if (qty <= 1) {
-                    minusButton.classList.add('disabled');
-                } else {
-                    minusButton.classList.remove('disabled');
-                }
+        // Update disabled state via class only if we have the element
+        const minusButton = this.el.querySelector('.qty-button.minus');
+        if (minusButton) {
+            if (qty <= 1) {
+                minusButton.classList.add('disabled');
+            } else {
+                minusButton.classList.remove('disabled');
             }
         }
     }

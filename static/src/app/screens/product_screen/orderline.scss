@@ -11,10 +11,12 @@
         z-index: 10; /* Ensure it's above other elements */
         opacity: 0; /* Hide by default */
         transition: opacity 0.2s ease;
+        pointer-events: none; /* Don't allow interaction by default */
     }
     
     &.selected .qty-controls {
         opacity: 1; /* Show when selected */
+        pointer-events: auto; /* Enable interaction when visible */
     }
     
     .qty-button {
@@ -66,6 +68,16 @@
             font-size: 16px;
         }
     }
+}
+
+/* Quantity-based styling using data attributes */
+.orderline[data-qty="1"] .qty-button.minus {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #e9ecef;
+    color: #6c757d;
+    box-shadow: none;
 }
 
 /* Touch device specific enhancements */
