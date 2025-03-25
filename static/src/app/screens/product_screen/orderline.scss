@@ -1,0 +1,104 @@
+.orderline {
+    position: relative; /* Ensure relative positioning for absolute children */
+    
+    .qty-controls {
+        position: absolute; /* Take it out of normal flow */
+        right: 10px; /* Position from right edge */
+        top: 0;
+        bottom: 0; /* Stretch to full height */
+        display: flex;
+        align-items: center;
+        z-index: 10; /* Ensure it's above other elements */
+        opacity: 0; /* Hide by default */
+        transition: opacity 0.2s ease;
+    }
+    
+    &.selected .qty-controls {
+        opacity: 1; /* Show when selected */
+    }
+    
+    .qty-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        width: 45px;
+        height: 45px; /* Fixed height */
+        min-height: 40px; /* Prevent shrinking */
+        border-radius: 5px;
+        margin: 0 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+        
+        &.minus {
+            background-color: #f8d7da;
+            color: #721c24;
+            
+            &:hover, &:active {
+                background-color: #f5c6cb;
+            }
+            
+            &.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                pointer-events: none;
+                background-color: #e9ecef;
+                color: #6c757d;
+                box-shadow: none;
+            }
+        }
+        
+        &.plus {
+            background-color: #d4edda;
+            color: #155724;
+            
+            &:hover, &:active {
+                background-color: #c3e6cb;
+            }
+        }
+        
+        &:active {
+            transform: scale(0.95);
+        }
+        
+        .fa {
+            font-size: 16px;
+        }
+    }
+}
+
+/* Touch device specific enhancements */
+@media (pointer: coarse) {
+    .orderline {
+        .qty-controls {
+            right: 5px; /* Slightly closer to edge on touch */
+        }
+        
+        .qty-button {
+            width: 50px; /* Larger for touch */
+            height: 50px; /* Larger for touch */
+            min-height: 50px;
+            
+            .fa {
+                font-size: 20px; /* Larger icons for touch */
+            }
+        }
+    }
+}
+
+/* Additional override to ensure full height available */
+.orderline {
+    min-height: 50px !important; /* Ensure minimum height for buttons */
+    
+    /* Override any flex constraints from parent */
+    .qty-controls {
+        flex: 0 0 auto !important;
+        height: auto !important;
+    }
+}
+
+/* Make space for the buttons so they don't overlap content */
+.orderline .product-price {
+    margin-right: 110px; /* Ensure space for the buttons on the right */
+}
