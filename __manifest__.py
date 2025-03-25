@@ -32,6 +32,7 @@
                 "point_of_sale_1/static/src/app/store/pos_store.js",
                 'point_of_sale_1/static/src/app/navbar/popup/**/**',
                 'point_of_sale_1/static/src/models/pos_order.js', 
+                'point_of_sale_1/static/src/xml/payment_screen.xml', 
 
                 "point_of_sale_1/static/src/app/screens/product_screen/**",
 
@@ -42,14 +43,21 @@
 
                 #  'point_of_sale_1/static/src/app/screens/receipt_screen/receipt_header.xml',
                 #  'point_of_sale_1/static/src/app/screens/receipt_screen/order_receipt.xml',
-            "point_of_sale_1/static/src/scss/overwritecss.scss",
-            "point_of_sale_1/static/src/app/navbar/navbar.xml",
-            "point_of_sale_1/static/src/app/screens/saver_screen/saver_screen.xml"
+                "point_of_sale_1/static/src/scss/overwritecss.scss",
+                "point_of_sale_1/static/src/app/navbar/navbar.xml",
+                "point_of_sale_1/static/src/app/screens/saver_screen/saver_screen.xml",
+                'point_of_sale_1/static/src/app/numpad/numpad.js',
+                'point_of_sale_1/static/src/scss/numpad.scss',
+                'point_of_sale_1/static/src/app/numpad/numpad.xml',
+                'point_of_sale_1/static/src/app/numpad/number_buffer_service_patch.js',
+
                 ],
 
                         'web.assets_backend': [
                         "point_of_sale_1/static/src/scss/overwritecss.scss",
-        ], 
+                        "point_of_sale_1/static/src/scss/numpad.scss",
+
+                ], 
     
     'images': [
         'static/description/banner-1.png',
