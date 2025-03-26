@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+
+        <!-- Action to open the PLU Categories Selection Wizard -->
+        <record id="action_plu_categories_selection" model="ir.actions.act_window">
+            <field name="name">Select PLU Categories</field>
+            <field name="res_model">plu.model</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field> <!-- Opens as a popup -->
+            <field name="context">{'default_category_ids': []}</field>
+        </record>
+
+        <!-- Form View for the PLU Categories Selection Wizard -->
+        <record id="plu_categories_selection_form" model="ir.ui.view">
+            <field name="name">plu.model.form</field>
+            <field name="model">plu.model</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="category_ids" widget="many2many_tags" />
+                        </group>
+                        <footer>
+                            <button string="Download" type="object" name="action_download" class="btn-primary"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Menu Item to Open the Wizard -->
+        <menuitem id="plu_management_menu"
+                  name="PLU Management"
+                  parent="point_of_sale.pos_config_menu_catalog"
+                  action="action_plu_categories_selection"
+                  groups="product.group_product_variant"
+                  sequence="11"/>
+
+    </data>
+</odoo>

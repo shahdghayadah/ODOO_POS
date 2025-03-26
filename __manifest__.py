@@ -16,6 +16,7 @@
         'views/pos_printer.xml',
         'security/ir.model.access.csv',  # Add the security file
         'views/product_template_views.xml',  
+        'views/plu_view.xml', 
 
     ],
 

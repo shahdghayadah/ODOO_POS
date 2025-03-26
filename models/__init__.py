@@ -7,3 +7,4 @@ from . import res_users
 from . import printer
 from . import multi_barcode_products
 from . import product_template
+from . import plu_model
