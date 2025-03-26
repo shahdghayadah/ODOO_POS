@@ -38,7 +38,7 @@
 
 
                 "point_of_sale_1/static/src/app/screens/ticket_screens/ticket_screen.xml",
-
+                #'point_of_sale_1/static/src/js/receipt_scanning.js',
 
 
                 #  'point_of_sale_1/static/src/app/screens/receipt_screen/receipt_header.xml',

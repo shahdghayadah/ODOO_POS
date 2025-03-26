@@ -1,6 +1,9 @@
 from datetime import date
 from odoo import models, fields, api, _
 from odoo.exceptions import AccessError
+# import logging
+
+# _logger = logging.getLogger(__name__)
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools.convert import datetime
 from datetime import datetime
@@ -122,84 +125,104 @@ class PosSession(models.Model):
         return data
     
 
-    def find_product_by_barcode(self, barcode, config_id):
-            # Load product and packaging fields
-            product_fields = self.env['product.product']._load_pos_data_fields(config_id)
-            product_packaging_fields = self.env['product.packaging']._load_pos_data_fields(config_id)
-            product_context = {**self.env.context, 'display_default_code': False}
 
-            # ✅ Standard barcode search on product.product
+    def find_product_by_barcode(self, barcode, config_id):
+        # _logger.info(f"Barcode scan initiated for: {barcode}")
+        
+        # # First check if this is a receipt number
+        # receipt_number = f"Order {barcode}"
+        # _logger.info(f"Checking for receipt with number: {receipt_number}")
+        
+        # order = self.env['pos.order'].search([
+        #     ('pos_reference', '=', receipt_number),
+        #     ('state', 'in', ['paid', 'invoiced', 'done', 'posted'])
+        # ], limit=1)
+        
+        # if order:
+        #     _logger.info(f"Found receipt order: ID={order.id}, Reference={order.pos_reference}")
+        #     return {
+        #         'product.product': [],  # Empty array required by frontend
+        #         'product.packaging': [],  # Empty array required by frontend
+        #         'pos_receipt': {  # Our receipt data
+        #             'id': order.id,
+        #             'pos_reference': order.pos_reference,
+        #             'amount_total': order.amount_total,
+        #             'date_order': order.date_order.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+        #         }
+        #     }
+        
+        # # Normal product scan fallthrough
+        # _logger.info("No receipt found, proceeding with normal product scan")
+            
+        # # Normal product scan fallthrough
+        # # ... (keep all your existing product scanning code)
+        # # Rest of your existing barcode scanning logic
+        product_fields = self.env['product.product']._load_pos_data_fields(config_id)
+        product_packaging_fields = self.env['product.packaging']._load_pos_data_fields(config_id)
+        product_context = {**self.env.context, 'display_default_code': False}
+
+        # Standard barcode search on product.product
+        product = self.env['product.product'].search([
+            ('barcode', '=', barcode),
+            ('sale_ok', '=', True),
+            ('available_in_pos', '=', True),
+        ])
+
+        if product:
+            product_data = product.with_context(product_context).read(product_fields, load=False)
+            return {'product.product': product_data if product_data else []}
+
+        # Search in multi.barcode.products
+        multi_barcode_product = self.env['multi.barcode.products'].search([('multi_barcode', '=', barcode)], limit=1)
+        if multi_barcode_product:
             product = self.env['product.product'].search([
-                ('barcode', '=', barcode),
+                ('product_tmpl_id', '=', multi_barcode_product.template_multi_id.id),
+                ('sale_ok', '=', True),
+                ('available_in_pos', '=', True),
+            ], limit=1)
+            if product:
+                product_data = product.with_context(product_context).read(product_fields, load=False)
+                return {'product.product': product_data if product_data else []}
+
+        # PLU barcode detection (13 digits, starts with '2')
+        if len(barcode) == 13 and barcode[0] == '2':
+            product_code = barcode[1:7]  # 6-digit product code
+            weight_or_price = barcode[7:12]  # 5-digit weight/price
+            product_code = str(int(product_code))  # "000090" → "90"
+
+            product = self.env['product.product'].search([
+                ('id', '=', product_code),
                 ('sale_ok', '=', True),
                 ('available_in_pos', '=', True),
             ])
 
             if product:
                 product_data = product.with_context(product_context).read(product_fields, load=False)
-                return {'product.product': product_data if product_data else []}
-
-            # ✅ Search in multi.barcode.products
-            multi_barcode_product = self.env['multi.barcode.products'].search([('multi_barcode', '=', barcode)], limit=1)
-            if multi_barcode_product:
-                product = self.env['product.product'].search([
-                    ('product_tmpl_id', '=', multi_barcode_product.template_multi_id.id),
-                    ('sale_ok', '=', True),
-                    ('available_in_pos', '=', True),
-                ], limit=1)
-                if product:
-                    product_data = product.with_context(product_context).read(product_fields, load=False)
-                    return {'product.product': product_data if product_data else []}
-
-            # ✅ PLU barcode detection (13 digits, starts with '2')
-            if len(barcode) == 13 and barcode[0] == '2':
-                # Extract Product Code (6 digits) & Weight/Price (5 digits)
-                product_code = barcode[1:7]  # 6-digit product code
-                weight_or_price = barcode[7:12]  # 5-digit weight/price
-
-                # Convert to integer and remove leading zeros
-                product_code = str(int(product_code))  # "000090" → "90"
-
-                # Search for the product using the ID
-                product = self.env['product.product'].search([
-                    ('id', '=', product_code),  # Searching by ID instead of default_code
-                    ('sale_ok', '=', True),
-                    ('available_in_pos', '=', True),
-                ])
-
-                if product:
-                    product_data = product.with_context(product_context).read(product_fields, load=False)
-                    if product_data:  # Ensure it's not empty before accessing
-                        product_data = product_data[0]
-
-                        # Check if the product is weight-based
-                        is_weighed = product.product_tmpl_id.to_weight
-                        if is_weighed:
-                            product_data['plu_weight'] = int(weight_or_price) / 1000  # Convert grams to kg
-                        else:
-                            product_data['plu_weight'] = 1  # Default weight for non-weighed items
-                            product_data['lst_price'] = int(weight_or_price) / 100  # Convert to price format
-
-                        return {'product.product': [product_data]}  # Ensure it's an array
-
+                if product_data:
+                    product_data = product_data[0]
+                    is_weighed = product.product_tmpl_id.to_weight
+                    if is_weighed:
+                        product_data['plu_weight'] = int(weight_or_price) / 1000
                     else:
-                        return {'product.product': []}  # Return an empty array if data is empty
+                        product_data['plu_weight'] = 1
+                        product_data['lst_price'] = int(weight_or_price) / 100
+                    return {'product.product': [product_data]}
 
-            # ✅ Check for product packaging
-            packaging = self.env['product.packaging'].search([('barcode', '=', barcode)])
-            if packaging and packaging.product_id:
-                product_data = packaging.product_id.with_context(product_context).read(product_fields, load=False)
-                packaging_data = packaging.read(product_packaging_fields, load=False)
-                return {
-                    'product.product': product_data,
-                    'product.packaging': packaging_data,
-                }
-
-            # Default return when no product or packaging is found
+        # Check for product packaging
+        packaging = self.env['product.packaging'].search([('barcode', '=', barcode)])
+        if packaging and packaging.product_id:
+            product_data = packaging.product_id.with_context(product_context).read(product_fields, load=False)
+            packaging_data = packaging.read(product_packaging_fields, load=False)
             return {
-                'product.product': [],
-                'product.packaging': [],
+                'product.product': product_data,
+                'product.packaging': packaging_data,
             }
+
+        # Default return when no product or packaging is found
+        return {
+            'product.product': [],
+            'product.packaging': [],
+        }
 
 
 
