@@ -11,7 +11,7 @@
     'depends': ['base', 'product', 'point_of_sale', 'account', 'web', 'sale_management', 'bus'],
     'data': [
         'views/res_config_settings_view.xml',
-        'views/pos_payment_method_views.xml',
+        'views/pos_payment_method_views.xml',#here we the problem 
         'views/pos_payment_views.xml',
         'views/pos_printer.xml',
         'security/ir.model.access.csv',  # Add the security file
