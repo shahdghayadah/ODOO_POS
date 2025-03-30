@@ -23,8 +23,8 @@ export async function sendTransactionRequest(amount, vuid, api_key, tranType, pu
 
     console.log("Payload:", payload);
     // Send the request
-    // const url = `${public_api_key}`;
-    const url = 'http://192.168.1.13:8080/SPICy'
+    const url = `${public_api_key}/print/spicy`;
+    //const url = 'http://192.168.1.13:8080/SPICy'
     try {
         const response = await fetch(url, {
             method: "POST",
@@ -66,7 +66,7 @@ export async function sendTransactionPhase1(amount, vuid, api_key, tranType, pub
     
     console.log("Payload:", payload);
     // Send the request
-    const url = `${public_api_key}`;
+    const url = `${public_api_key}/print/spicy`;
     // const url ='http://192.168.1.13:8080/SPICy'
 
 
@@ -108,7 +108,7 @@ export async function sendTransactionPhase2(vuid, api_key, public_api_key , paym
     
     console.log("Payload:", payload);
     // Send the request
-    const url = `${public_api_key}`;
+    const url = `${public_api_key}/print/spicy`;
     // const url ='http://192.168.1.13:8080/SPICy'
 
     try {

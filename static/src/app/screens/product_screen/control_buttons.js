@@ -75,10 +75,10 @@ patch(ControlButtons.prototype, {
     async clickDiscount() {
         // Ask the user to choose discount type
         const selectedType = await makeAwaitable(this.dialog, SelectionPopup, {
-            title: _t("Discount Type"),
+            title: ("סוג הנחה"),
             list: [
-                { id: "percentage", label: _t("Percentage"), item: "percentage" },
-                { id: "fixed", label: _t("Fixed Amount"), item: "fixed" },
+                { id: "percentage", label: ("אֲחוּזִים"), item: "percentage" },
+                { id: "fixed", label: ("סכום קבוע"), item: "fixed" },
             ],
         });
     
@@ -88,7 +88,7 @@ patch(ControlButtons.prototype, {
     
         const discountType = selectedType;
     
-        let title = discountType === "percentage" ? _t("Discount Percentage") : _t("Discount Amount");
+        let title = discountType === "percentage" ? ("אחוז הנחה") : ("סכום הנחה");
     
         const enteredValue = await makeAwaitable(this.dialog, NumberPopup, {
             title: title,
@@ -124,9 +124,9 @@ patch(ControlButtons.prototype, {
 
         if (product === undefined) {
             this.dialog.add(AlertDialog, {
-                title: _t("No discount product found"),
-                body: _t(
-                    "The discount product seems misconfigured. Make sure it is flagged as 'Can be Sold' and 'Available in Point of Sale'."
+                title: ("לא נמצא מוצר הנחה"),
+                body: (
+                    "מוצר ההנחה נראה שגוי. ודא שהוא מסומן כ'ניתן למכור' ו'זמין בנקודת מכירה'."
                 ),
             });
             return;

@@ -16,7 +16,7 @@
              <field name="phone_number" string="Phone Number" invisible="not is_bit "/>
              <field name="check_transfer_date" string="Transfer Date" invisible="not is_bit "/>
              <field name="expDate" string="Card exp Date" invisible="not is_card_nayax "/>
-
+             <field name="card_no" string="Card number" invisible="not is_card_nayax "/>
             </xpath>
         </field>
     </record>

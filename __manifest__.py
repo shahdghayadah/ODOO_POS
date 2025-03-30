@@ -11,7 +11,7 @@
     'depends': ['base', 'product', 'point_of_sale', 'account', 'web', 'sale_management', 'bus'],
     'data': [
         'views/res_config_settings_view.xml',
-        'views/pos_payment_method_views.xml',
+        'views/pos_payment_method_views.xml',#here we the problem 
         'views/pos_payment_views.xml',
         'views/pos_printer.xml',
         'security/ir.model.access.csv',  # Add the security file
@@ -27,7 +27,7 @@
                 "point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.xml",
                 "point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js",
                 "point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.js",
-                # "point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.xml",
+                "point_of_sale_1/static/src/app/screens/payment_screen/payment_screen.xml",
                 "point_of_sale_1/static/src/app/screens/payment_screen/payment_lines/payment_lines.js",
                 "point_of_sale_1/static/src/app/screens/payment_screen/payment_functions.js",
                 "point_of_sale_1/static/src/app/store/pos_store.js",
@@ -39,11 +39,11 @@
 
 
                 "point_of_sale_1/static/src/app/screens/ticket_screens/ticket_screen.xml",
-                #'point_of_sale_1/static/src/js/receipt_scanning.js',
+                'point_of_sale_1/static/src/js/receipt_scanning.js',
 
 
-                #  'point_of_sale_1/static/src/app/screens/receipt_screen/receipt_header.xml',
-                #  'point_of_sale_1/static/src/app/screens/receipt_screen/order_receipt.xml',
+                 'point_of_sale_1/static/src/app/screens/receipt_screen/receipt_header.xml',
+                 'point_of_sale_1/static/src/app/screens/receipt_screen/order_receipt.xml',
                 "point_of_sale_1/static/src/scss/overwritecss.scss",
                 "point_of_sale_1/static/src/app/navbar/navbar.xml",
                 "point_of_sale_1/static/src/app/screens/saver_screen/saver_screen.xml",

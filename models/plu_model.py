@@ -38,8 +38,7 @@ class PLUModel(models.TransientModel):
             file_content += line
 
         # Encode the file content to base64
-        file_content_base64 = base64.b64encode(file_content.encode('ANSI'))
-
+            file_content_base64 = base64.b64encode(file_content.encode('utf-8'))
         # Create an attachment for the file
         attachment = self.env['ir.attachment'].create({
             'name': 'PLU.TXT',

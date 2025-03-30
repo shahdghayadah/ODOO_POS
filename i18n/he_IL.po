@@ -174,8 +174,15 @@ msgstr "תאריך"
 #. module: point_of_sale_1
 #. odoo-javascript
 #: code:addons/point_of_sale_1/static/src/app/navbar/closing_popup/closing_popup.js:0
+#: code:addons/point_of_sale_1/static/src/app/screens/product_screen/control_buttons.js:0
 msgid "Discard"
 msgstr "בטל"
+
+#. module: point_of_sale_1
+#. odoo-javascript
+#: code:addons/point_of_sale_1/static/src/app/screens/product_screen/control_buttons.js:0
+msgid "Ok"
+msgstr "בְּסֵדֶר"
 
 #. module: point_of_sale_1
 #: model:ir.model.fields,help:point_of_sale_1.field_res_config_settings__module_pos_Checks
@@ -230,6 +237,48 @@ msgstr "האם זה תשלום בצ'ק"
 #: model:ir.model.fields,field_description:point_of_sale_1.field_pos_payment_method__journal_id
 msgid "Journal"
 msgstr "יומן"
+
+#. module: pos_restaurant
+#. odoo-javascript
+#: code:addons/pos_restaurant/static/src/app/control_buttons/control_buttons.xml:0
+msgid "Transfer / Merge"
+msgstr "העברה / מיזוג"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/js/Popups/NumberPopup.js:0
+msgid "Discard"
+msgstr "לְהַשְׁלִיך"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/navbar/closing_popup/closing_popup.xml:0
+#: code:addons/point_of_sale/static/src/app/navbar/navbar.xml:0
+msgid "Close Register"
+msgstr "סגור את הרישום"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/navbar/navbar.xml:0
+msgid "Create Product"
+msgstr "צור מוצר"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/js/Popups/NumberPopup.js:0
+msgid "Ok"
+msgstr "בְּסֵדֶר"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_discount__discount_type
+msgid "Discount Type"
+msgstr "סוג הנחה"
+
+#. module: pos_restaurant
+#. odoo-javascript
+#: code:addons/pos_restaurant/static/src/app/product_screen/order_summary/order_summary.xml:0
+msgid "Book table"
+msgstr "שולחן ספרים"
 
 #. module: point_of_sale_1
 #: model:ir.model.fields,help:point_of_sale_1.field_pos_payment_method__journal_id

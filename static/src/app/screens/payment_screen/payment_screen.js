@@ -173,16 +173,15 @@ patch(PaymentScreen.prototype, {
                 if (!line.is_done()) {
                     this.currentOrder.remove_paymentline(line);
                 }
-            }            
+            }
             await this.printOrderByCategory();
 
             await this._finalizeValidation();
 
             this.pos.printReceipt()
-
-
         }
     },
+
     async printOrderByCategory() {
         const orderLines = this.currentOrder.get_orderlines();
         const printerData = await this.orm.searchRead("printer.kad", [], ['name', 'pos_category_id']);
@@ -194,31 +193,31 @@ patch(PaymentScreen.prototype, {
             acc[item.pos_category_id[1]] = item.name;
             return acc;
         }, {});
-    
+
         console.log("Printers mapping:", printers);
-    
+
         console.log("Current order:", this.currentOrder);
-    
+
         // Group order lines by category
         const groupedOrders = {};
-    
+
         for (const line of orderLines) {
             const category = line.product_id.pos_categ_ids[0]?.name || "Other";
-            
+
             if (!groupedOrders[category]) {
                 groupedOrders[category] = [];
             }
-            
+
             groupedOrders[category].push(line);
         }
-    
+
         console.log("Grouped orders:", groupedOrders);
         // Iterate over each category and send a consolidated print request
         for (const category in groupedOrders) {
             let printerName;
 
             printerName = printers[category];
-            
+
             // if (category.includes("Food")) {
             //     printerName = printers['Kitchen'];
             // } else if (category.includes("Drinks")) {
@@ -226,53 +225,64 @@ patch(PaymentScreen.prototype, {
             // } else {
             //     printerName = printers['USB'];
             // }
-    
+
             if (printerName) {
                 await this.sendToPrinter(groupedOrders[category], category, printerName);
             }
         }
-    }
-    ,
-    async sendToPrinter(orderLines, category, printerName) {
-        const result =  await this.orm.searchRead("res.config.settings", [], ['printer_API']);
-        const apiUrl = result[0].printer_API;
-        // Format order details for printing
-        let orderDetails = `Order for ${printerName}\nTime: ${this.currentOrder.date_order}\nOrder ID: ${this.currentOrder.tracking_number}\nCategory: ${category}\n\nItems:\n`;
-    
-        orderLines.forEach(line => {
-            orderDetails += `- ${line.qty}x ${line.full_product_name} \n`;
-            if (line.note) {
+    },
 
-                orderDetails += ` (Notes: ${line.note})`;
+    async sendToPrinter(orderLines, category, printerName) {
+        try {
+            const result = await this.orm.searchRead("res.config.settings", [], ['printer_API']);
+            console.log("Printer API result:", result);  // Log the result of the searchRead
+            if (!result || result.length === 0 || !result[0].printer_API) {
+                console.warn("printer_API not found in res.config.settings. Printing will be skipped.");
+                this.notification.add(
+                    _t("Printer API not configured.  Please check your settings."),
+                    { type: 'warning', sticky: false }
+                );
+                return;  // Exit the function if printer_API is missing
             }
 
-            orderDetails += `\n`;
+            const apiUrl = result[0].printer_API;
 
-        });
-    
-        const requestBody = {
-            "TextContent": orderDetails,
-            "PrinterName": printerName
-        };
-    
-        try {
-            const response = await fetch(apiUrl, {
+            // Format order details for printing
+            let orderDetails = `Order for ${printerName}\nTime: ${this.currentOrder.date_order}\nOrder ID: ${this.currentOrder.tracking_number}\nCategory: ${category}\n\nItems:\n`;
+
+            orderLines.forEach(line => {
+                orderDetails += `- ${line.qty}x ${line.full_product_name} \n`;
+                if (line.note) {
+                    orderDetails += ` (Notes: ${line.note})`;
+                }
+                orderDetails += `\n`;
+            });
+
+            const requestBody = {
+                "TextContent": orderDetails,
+                "PrinterName": printerName
+            };
+
+            const response = await fetch(`${apiUrl}/print/print`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(requestBody)
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Printing failed: ${response.statusText}`);
             }
-    
+
             const responseData = await response.json();
             console.log("Print request successful:", responseData);
         } catch (error) {
             console.error("Error sending print request:", error);
+             this.notification.add(
+                    _t(`Error sending print request: ${error.message}`),
+                    { type: 'danger', sticky: true }
+                );
         }
     }
-
 });
