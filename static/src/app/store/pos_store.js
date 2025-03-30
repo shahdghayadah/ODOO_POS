@@ -36,7 +36,37 @@ patch(PosStore.prototype, {
         const options = {
             ...opts,
         };
+    getReceiptHeaderData(order) {
+        return {
+            company: this.company,
+            cashier: _t("Served by %s", order?.getCashierName() || this.get_cashier()?.name),
+            header: this.config.receipt_header,
+            order: order,
+        };
+    },
 
+    async addLineToOrder(vals, order, opts = {}, configure = true) {
+        let merge = true;
+        order.assert_editable();
+        let plu_weight = null;
+
+        if (vals.product_id) {
+            if(vals.product_id.raw && vals.product_id.raw.plu_weight) {
+                plu_weight = vals.product_id.raw.plu_weight;
+            }
+            if(vals.product_id.plu_weight){
+                plu_weight = vals.product_id.plu_weight;
+                delete vals.product_id.plu_weight;
+            }
+        }
+
+        const options = {
+            ...opts,
+        };
+
+        if ("price_unit" in vals) {
+            merge = false;
+        }
         if ("price_unit" in vals) {
             merge = false;
         }
@@ -45,7 +75,21 @@ patch(PosStore.prototype, {
             vals.product_id = this.data.models["product.product"].get(vals.product_id);
         }
         const product = vals.product_id;
+        if (typeof vals.product_id == "number") {
+            vals.product_id = this.data.models["product.product"].get(vals.product_id);
+        }
+        const product = vals.product_id;
 
+        const values = {
+            price_type: "price_unit" in vals ? "manual" : "original",
+            price_extra: 0,
+            price_unit: 0,
+            order_id: this.get_order(),
+            qty: plu_weight || 1,
+            tax_ids: product.taxes_id.map((tax) => ["link", tax]),
+            ...vals,
+        };
+        delete vals.product_id.plu_weight;
         const values = {
             price_type: "price_unit" in vals ? "manual" : "original",
             price_extra: 0,
@@ -150,6 +194,7 @@ patch(PosStore.prototype, {
                     subtitle: _t("Please enter the weight for ") + values.product_id.display_name,
                     startingValue: "1.000",
                     confirmButtonLabel: _t("Confirm"),
+                    close: () => null,
                     close: () => null,
                 });
                 if (weight === null || weight === undefined) return;
