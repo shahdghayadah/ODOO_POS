@@ -6,36 +6,11 @@ import { AlertDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { ComboConfiguratorPopup } from "@point_of_sale/app/store/combo_configurator_popup/combo_configurator_popup";
 import { computeComboItems } from "@point_of_sale/app/models/utils/compute_combo_items";
 import { NumberPopup } from "@point_of_sale/app/utils/input_popups/number_popup";
+
+
 patch(PosStore.prototype, {
-   
+    
 
-    getReceiptHeaderData(order) {
-        return {
-            company: this.company,
-            cashier: _t("Served by %s", order?.getCashierName() || this.get_cashier()?.name),
-            header: this.config.receipt_header,
-            order: order,
-        };
-    },
-
-    async addLineToOrder(vals, order, opts = {}, configure = true) {
-        let merge = true;
-        order.assert_editable();
-        let plu_weight = null;
-
-        if (vals.product_id) {
-            if(vals.product_id.raw && vals.product_id.raw.plu_weight) {
-                plu_weight = vals.product_id.raw.plu_weight;
-            }
-            if(vals.product_id.plu_weight){
-                plu_weight = vals.product_id.plu_weight;
-                delete vals.product_id.plu_weight;
-            }
-        }
-
-        const options = {
-            ...opts,
-        };
     getReceiptHeaderData(order) {
         return {
             company: this.company,
@@ -67,29 +42,12 @@ patch(PosStore.prototype, {
         if ("price_unit" in vals) {
             merge = false;
         }
-        if ("price_unit" in vals) {
-            merge = false;
-        }
 
         if (typeof vals.product_id == "number") {
             vals.product_id = this.data.models["product.product"].get(vals.product_id);
         }
         const product = vals.product_id;
-        if (typeof vals.product_id == "number") {
-            vals.product_id = this.data.models["product.product"].get(vals.product_id);
-        }
-        const product = vals.product_id;
 
-        const values = {
-            price_type: "price_unit" in vals ? "manual" : "original",
-            price_extra: 0,
-            price_unit: 0,
-            order_id: this.get_order(),
-            qty: plu_weight || 1,
-            tax_ids: product.taxes_id.map((tax) => ["link", tax]),
-            ...vals,
-        };
-        delete vals.product_id.plu_weight;
         const values = {
             price_type: "price_unit" in vals ? "manual" : "original",
             price_extra: 0,
@@ -172,11 +130,12 @@ patch(PosStore.prototype, {
             values.price_extra += priceExtra;
         }
         else if (values.product_id.to_weight && configure) {
-            console.log("Product is to_weight:", values.product_id);
+            // Try to get weight from scale first
             let weight = null;
             try {
 
-                    const apiUrl = "https://demo.kad.is/"
+                const apiUrl="https://demo.kad.is"
+                if (apiUrl) {
                     const response = await fetch(`${apiUrl}/scale/weight`);
                     if (response.ok) {
                         const scaleData = await response.json();
@@ -184,10 +143,12 @@ patch(PosStore.prototype, {
                             weight = scaleData.value;
                         }
                     }
+                }
             } catch (error) {
-                console.error("Error fetching scale weight:", error);
+                console.error("Error getting weight from scale:", error);
             }
-        
+
+            // Fall back to manual input if scale didn't provide weight
             if (!weight) {
                 weight = await makeAwaitable(this.dialog, NumberPopup, {
                     title: _t("Enter Weight"),
@@ -195,22 +156,27 @@ patch(PosStore.prototype, {
                     startingValue: "1.000",
                     confirmButtonLabel: _t("Confirm"),
                     close: () => null,
-                    close: () => null,
                 });
-                if (weight === null || weight === undefined) return;
+
+                if (weight === null || weight === undefined) {
+                    console.log("Weight input was discarded.");
+                    return;
+                }
             }
-        
+
+            console.log("Weight entered:", weight);
             const parsedWeight = parseFloat(weight);
+
             if (isNaN(parsedWeight) || parsedWeight <= 0) {
                 await this.dialog.add(AlertDialog, {
                     title: _t("Invalid Weight"),
-                    body: _t("Please enter a valid weight."),
+                    body: _t("Please enter a valid weight (greater than 0)."),
                 });
                 return;
+            } else {
+                values.qty = parsedWeight;
             }
-            values.qty = parsedWeight;
         }
-        
         // Rest of the method remains unchanged...
         if (values.product_id.isCombo() && configure) {
             const payload = await makeAwaitable(this.dialog, ComboConfiguratorPopup, {
