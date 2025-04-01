@@ -114,3 +114,34 @@
 .orderline .product-price {
     margin-right: 110px; /* Ensure space for the buttons on the right */
 }
+
+
+/* Additional RTL adjustments */
+.o_rtl .qty-button.plus {
+    order: 1;
+}
+
+.o_rtl .qty-button.minus {
+    order: 2;
+}
+
+/* RTL Support */
+.o_rtl .orderline .qty-buttons {
+    right: auto;
+    left: 5px;
+}
+
+
+/* Make space for buttons - note shouldn't extend under quantity controls */
+.orderline .info-list {
+    margin-right: 110px; /* Same as product-price margin */
+    max-width: calc(100% - 120px); /* Ensure it doesn't overflow */
+    overflow: hidden; /* Prevent text overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+}
+
+/* Additional rule for the note itself if needed */
+.orderline .info-list .note {
+    margin-right: 0; /* Remove any existing margin */
+    max-width: 100%; /* Use full width of parent */
+}
