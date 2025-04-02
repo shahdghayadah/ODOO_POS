@@ -34,8 +34,18 @@ patch(Orderline.prototype, {
                 orderline.set_quantity(currentQty - 1);
                 // DOM updates will be handled reactively
             } else {
-                // dont do anything if quantity is already 1
-
+                // Remove the line if quantity is 1
+                // Try different method names based on Odoo version
+                if (typeof order.remove_orderline === 'function') {
+                    order.remove_orderline(orderline);
+                } else if (typeof order.removeOrderline === 'function') {
+                    order.removeOrderline(orderline);
+                } else if (typeof order.remove_line === 'function') {
+                    order.remove_line(orderline);
+                } else {
+                    // Fallback - set quantity to 0 which should remove the line in most implementations
+                    orderline.set_quantity(0);
+                }
             }
         }
     },
