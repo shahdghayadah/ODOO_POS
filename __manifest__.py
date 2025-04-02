@@ -34,16 +34,17 @@
                 'point_of_sale_1/static/src/app/navbar/popup/**/**',
                 'point_of_sale_1/static/src/models/pos_order.js', 
                 'point_of_sale_1/static/src/xml/payment_screen.xml', 
-
+                # 'point_of_sale_1/static/src/js/pos_company_logo.js',
+                # 'point_of_sale_1/static/src/xml/pos_company_logo.xml',
                 "point_of_sale_1/static/src/app/screens/product_screen/**",
 
 
                 "point_of_sale_1/static/src/app/screens/ticket_screens/ticket_screen.xml",
-                'point_of_sale_1/static/src/js/receipt_scanning.js',
+                #'point_of_sale_1/static/src/js/receipt_scanning.js',
 
 
-                 'point_of_sale_1/static/src/app/screens/receipt_screen/receipt_header.xml',
-                 'point_of_sale_1/static/src/app/screens/receipt_screen/order_receipt.xml',
+                'point_of_sale_1/static/src/app/screens/receipt_screen/receipt_header.xml',
+                'point_of_sale_1/static/src/app/screens/receipt_screen/order_receipt.xml',
                 "point_of_sale_1/static/src/scss/overwritecss.scss",
                 "point_of_sale_1/static/src/app/navbar/navbar.xml",
                 "point_of_sale_1/static/src/app/screens/saver_screen/saver_screen.xml",

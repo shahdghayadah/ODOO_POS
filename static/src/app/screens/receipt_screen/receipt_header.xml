@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
-    <xpath expr="//img[hasclass('pos-receipt-logo')]" position="attributes">
-        <attribute name="style">display: none;</attribute>
-    </xpath>
-   
+        <!-- Keep the logo but don't hide it by default -->
+        <xpath expr="//img[hasclass('pos-receipt-logo')]" position="attributes">
+            <attribute name="t-attf-style">display: <t t-esc="props.data.company.logo ? 'block' : 'none'" />;</attribute>
+        </xpath>
         <xpath expr="//div[hasclass('pos-receipt-contact')]" position="replace">
             <div class="d-flex flex-column align-items-center" dir="rtl">
                 <div class="pos-receipt-contact" style="font-size: 18px; font-weight: bold;">
@@ -15,10 +15,11 @@
                     <t t-if="props.data.company.phone">
                         <div style="font-size: 14px;">Tel:<t t-esc="props.data.company.phone" /></div>
                     </t>
-                    <t t-if="props.data.company.vat">
-                        <div style="font-size: 14px;" t-esc="vatText"/>
-                    </t>
-                    <br />
+                <t t-if="props.data.company.vat">
+                    <div style="font-size: 14px;">
+                        ח.פ / ע.מ: <t t-esc="props.data.company.vat" />
+                    </div>
+                </t>
                     <div style="font-size: 14px;">
                     <t t-set="is_refund" t-value="props.data.order.lines.some(orderline =&gt; orderline.qty  &lt; 0)"/>
                         <t t-if="is_refund"> חשבונית מס זיכוי - מקור </t>
@@ -28,11 +29,13 @@
                     <div t-if="false" class="cashier">
                         <div t-if="false" t-esc="props.data.cashier" />
                     </div>
+                    <div t-if="props.data.trackingNumber and !props.data.bigTrackingNumber">
+                    <span class="tracking-number fs-1" t-esc="props.data.trackingNumber" />
+                </div>
                 </div>
             </div>
         </xpath>
-         <xpath expr="//h1[hasclass('tracking-number')]" position="replace">
-        </xpath>
+
  
     </t>
 </templates>

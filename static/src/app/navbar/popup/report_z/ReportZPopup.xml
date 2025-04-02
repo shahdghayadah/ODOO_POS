@@ -3,18 +3,18 @@
         <Dialog title="props.title">
             <div class="manual-payment-popup">
                     <div class="form-group">
-                        <label for="dateFrom">From Date</label>
+                        <label for="dateFrom">מתאריך</label>
                         <input type="datetime-local" id="dateFrom" t-on-change="onDateFromChange" t-att-value="state.dateFrom"/>
                     </div>
                
                     <div class="form-group">
-                        <label for="dateTo">To Date</label>
+                        <label for="dateTo">עד תאריך</label>
                         <input type="datetime-local" id="dateTo" t-on-change="onDateToChange" t-att-value="state.dateTo"/>
                     </div>
                       
                 <t t-set-slot="footer">
-                    <button class="btn btn-secondary" t-on-click="onCancel">Cancel</button>
-                    <button class="btn btn-primary" t-on-click="onConfirm">Confirm</button>
+                    <button class="btn btn-secondary" t-on-click="onCancel">לבטל</button>
+                    <button class="btn btn-primary" t-on-click="onConfirm">אשר</button>
                 </t>
             </div>
         </Dialog>

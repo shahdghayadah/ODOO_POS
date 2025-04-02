@@ -317,6 +317,7 @@ class PosSession(models.Model):
                         'company_name': current_company.name,
                         'company_vat': current_company.vat,
                         'company_street': current_company.street,
+                        'company_address': current_company.city,
                         'company_phone': current_company.phone,
                         'company_registry': current_company.company_registry,
                         'total_cash_payment': total_default_cash_payment_amount + total_card_payment_amount,

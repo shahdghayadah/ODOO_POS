@@ -27,7 +27,7 @@ patch(ClosePosPopup.prototype, {
         let result1
         
          result1 = await makeAwaitable(this.dialog, ReportZPopup, {
-            title: "insert dates ",
+            title: "הכנס תאריכים",
             confirm: async (result1) => {
                 if (result1.confirmed) {
 
@@ -123,19 +123,17 @@ patch(ClosePosPopup.prototype, {
     },
     generateReportXContent() {
         let content = "";
-   
-        // === Header with Company Name and VAT ID ===
-        content += `<div style="display: flex; flex-direction: column; align-items: center; direction: rtl; width: 100%;">
+
+            content += `<div style="display: flex; flex-direction: column; align-items: center; direction: rtl; width: 100%;">
             <div style="font-size: 18px; line-height: 0.4; text-align: center; width: 100%;">
-                <div>${this.props.orders_details.company_name}</div>
-                <div>${this.props.orders_details.company_street}</div>
-                <div>טלפון ${this.props.orders_details.company_phone}</div>
-                <div>ח.פ ${this.props.orders_details.company_vat}</div>
-                <div>מסוף ${this.props.orders_details.company_registry}</div>
-                <div>דו"ח X</div>
+            ${this.props.orders_details.company_name ? `<div>${this.props.orders_details.company_name}</div>` : ''}
+            ${this.props.orders_details.company_address ? `<div>${this.props.orders_details.company_address}</div>` : ''}
+            ${this.props.orders_details.company_phone ? `<div>טלפון ${this.props.orders_details.company_phone}</div>` : ''}
+            ${this.props.orders_details.company_vat ? `<div>ח.פ ${this.props.orders_details.company_vat}</div>` : ''}
+            ${this.props.orders_details.company_registry ? `<div>מסוף ${this.props.orders_details.company_registry}</div>` : ''}
+            <div>דו"ח X</div>
             </div>
             </div>\n`;
-   
         content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 5px 0; font-size:1px;'></div>\n";
    
         // Format and display Opening Date
@@ -257,12 +255,12 @@ patch(ClosePosPopup.prototype, {
         // === Header with Company Name and VAT ID ===
         content += `<div style="display: flex; flex-direction: column; align-items: center; direction: rtl; width: 100%;">
             <div style="font-size: 18px; line-height: 0.4; text-align: center; width: 100%;">
-                <div>${orders_details.company_name}</div>
-                <div>${orders_details.company_street}</div>
-                <div>טלפון ${orders_details.company_phone}</div>
-                <div>ח.פ ${orders_details.company_vat}</div>
-                <div>מסוף ${orders_details.company_registry}</div>
-                <div>דו"ח Z</div>
+            ${this.props.orders_details.company_name ? `<div>${this.props.orders_details.company_name}</div>` : ''}
+            ${this.props.orders_details.company_address ? `<div>${this.props.orders_details.company_address}</div>` : ''}
+            ${this.props.orders_details.company_phone ? `<div>טלפון ${this.props.orders_details.company_phone}</div>` : ''}
+            ${this.props.orders_details.company_vat ? `<div>ח.פ ${this.props.orders_details.company_vat}</div>` : ''}
+            ${this.props.orders_details.company_registry ? `<div>מסוף ${this.props.orders_details.company_registry}</div>` : ''}
+            <div>דו"ח Z</div>
             </div>
             </div>\n`;
  
@@ -497,16 +495,18 @@ patch(ClosePosPopup.prototype, {
         let content = "";
    
         // === Header with Company Name and VAT ID ===
+        // === Header with Company Name and VAT ID ===
         content += `<div style="display: flex; flex-direction: column; align-items: center; direction: rtl; width: 100%;">
             <div style="font-size: 18px; line-height: 0.4; text-align: center; width: 100%;">
-                <div>${this.props.orders_details.company_name}</div>
-                <div>${this.props.orders_details.company_street}</div>
-                <div>טלפון ${this.props.orders_details.company_phone}</div>
-                <div>ח.פ ${this.props.orders_details.company_vat}</div>
-                <div>מסוף ${this.props.orders_details.company_registry}</div>
-                <div>דו"ח Z</div>
+            ${this.props.orders_details.company_name ? `<div>${this.props.orders_details.company_name}</div>` : ''}
+            ${this.props.orders_details.company_address ? `<div>${this.props.orders_details.company_address}</div>` : ''}
+            ${this.props.orders_details.company_phone ? `<div>טלפון ${this.props.orders_details.company_phone}</div>` : ''}
+            ${this.props.orders_details.company_vat ? `<div>ח.פ ${this.props.orders_details.company_vat}</div>` : ''}
+            ${this.props.orders_details.company_registry ? `<div>מסוף ${this.props.orders_details.company_registry}</div>` : ''}
+            <div>דו"ח Z</div>
             </div>
             </div>\n`;
+ 
  
         content += "<div style='border-bottom: 1px dashed #000; display: block; margin: 5px 0; font-size:1px;'></div>\n";
  
