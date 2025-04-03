@@ -3,20 +3,37 @@
     <record id="pos_config_settings_view_form" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.inherit.pos.nayax</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form" />
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
         <field name="arch" type="xml">
+            
+            <!-- KAD Developments Section -->
+            <xpath expr="//block[@id='pos_payment_terminals_section']" position="before">
+                <block title="KAD Developments" id="pos_printers_terminals_section">
+                    <group>
+                        <field name="printer_API" string="Printer API" placeholder="Enter Printer API"/>
+                    </group>
+                    
+                        <setting title="Default Category" string="Allow Default Category"
+                                 help="Enable this feature to activate the Default Category functionality">
+                            <field name="AllowDefault"/>
+                        </setting>
+
+                        <setting title="Show Categories Bar" string="Show Categories Bar"
+                                 help="Enable this feature to display the categories bar">
+                            <field name="ShowCategoriesBar"/>
+                        </setting>
+                </block>
+            </xpath>
+
+            <!-- Nayax Payment Terminal Section -->
             <xpath expr="//block[@id='pos_payment_terminals_section']" position="inside">
-                <setting id="pos_nayax_setting" title="The transactions are processed by Nayax. Set your Nayax credentials on the related payment method." string="Nayax" help="Accept payments with a Nayax payment terminal">
+                <setting id="pos_nayax_setting" title="Nayax Payments"
+                         string="Nayax"
+                         help="Accept payments with a Nayax payment terminal. Set your Nayax credentials in the related payment method.">
                     <field name="module_pos_nayax"/>
                 </setting>
             </xpath>
 
-            <xpath expr="//block[@id='pos_payment_terminals_section']" position="before">
-                <block title="Printers Section" id="pos_printers_terminals_section">
-                <p>Ensert Printers API</p>
-                        <field name="printer_API" string="printer API" placeholder="Enter Printer API"/>
-                </block>
-            </xpath>
         </field>
     </record>
 </odoo>

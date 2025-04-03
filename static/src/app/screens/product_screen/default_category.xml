@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
+        <!-- Add your check loyalty button -->
+          <!-- <xpath expr="//CategorySelector" position="attributes"> -->
+            <!-- <attribute name="t-if">!ui.isSmall || !pos.scanning</attribute>
+            <attribute name="class">'p-2'</attribute>
+            <attribute name="categories">getCategoriesAndSub()</attribute>
+            <attribute name="onClick">(id) => this.pos.setSelectedCategory(id)</attribute> -->
+        <!-- </xpath> -->
+       
+        
+        <!-- Simplified ActionpadWidget - remove the disabled wrapper -->
+       
+    </t>
+  <t t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
+    <xpath expr="//CategorySelector" position="replace">
+            <!-- <t t-log="'showCategoriesBar value:', this.showCategories"/> -->
+
+        <t t-if="this.showCategories">
+            <CategorySelector
+                t-if="!ui.isSmall || !pos.scanning"
+                class="'p-2'"
+                categories="getCategoriesAndSub()"
+                onClick="(id) => this.pos.setSelectedCategory(id)"
+            />
+        </t>
+    </xpath>
+          <xpath expr="//div[hasclass('flex-grow-1') and hasclass('text-center') and hasclass('mt-5')]" position="replace">
+     
+            <div class="flex-grow-1 text-center mt-5">
+                <div style="height: 250px; display: flex; align-items: center; justify-content: center;"></div>
+                   <img t-attf-src="/web/image?model=res.company&amp;id={{pos.company.id}}&amp;field=logo"
+         style="max-width: 200px; max-height: 100px; margin-bottom: 0px;"
+         alt="Company Logo"/>
+               
+            </div>
+        </xpath>
+ 
+</t>
+</templates>

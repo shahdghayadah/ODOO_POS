@@ -19,8 +19,14 @@ class ResConfigSettings(models.TransientModel):
     printer_API = fields.Char(string="Printer API", help="API of the printer.")
 
 
-    
-
+    AllowDefault = fields.Boolean(
+        string="AllowDefault",
+        help="Enable this feature to activate the Default Category functionality.",default=False,readonly=False, config_parameter='point_of_sale_1.AllowDefault'
+    )
+    ShowCategoriesBar=fields.Boolean(
+        string="ShowCategoriesBar",
+        help="Enable this feature to Show Categories Bar.",default=False,readonly=False, config_parameter='point_of_sale_1.ShowCategoriesBar'
+    )
     @api.model
     def get_values(self):
         """Override to retrieve values stored in ir.config_parameter."""
@@ -44,4 +50,9 @@ class ResConfigSettings(models.TransientModel):
         params += ['printer_API']
 
         return params    
-    
+    def get_pos_ui_settings(self):
+        """ This method will send the value of showCategoriesBar to the POS frontend. """
+        self.ensure_one()
+        return {
+            'showCategoriesBar': self.showCategoriesBar,
+        }
